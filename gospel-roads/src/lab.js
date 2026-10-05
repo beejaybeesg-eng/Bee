@@ -389,7 +389,7 @@ async function playPreview(ref,i,alt){
   let ab=null;try{const resp=await fetch(r.previewUrl,{mode:'cors'});if(!resp.ok)throw 0;ab=await resp.arrayBuffer();}catch(e){ab=null;}
   if(ab){const ok=await loadArrayBuffer(ab,r.artistName+' — '+r.trackName,'preview',{link:r.trackViewUrl,preview:{q,alt}});if(ok){clip.link=r.trackViewUrl;$('#lab-src').innerHTML='<a href="'+r.trackViewUrl+'" target="_blank" rel="noopener">在 Apple Music 打开 ↗</a>';play();}}
   else{ // fall back to plain playback without analysis
-    stop();const m=new Audio(r.previewUrl);L.media=m;m.play().catch(()=>{});m.onended=()=>{L.media=null;};
+    stop();const m=new Audio(r.previewUrl);L.media=m;if(window.MUSIC)MUSIC.duck(true);m.play().catch(()=>{});m.onended=()=>{L.media=null;if(window.MUSIC)MUSIC.duck(false);};
     setStatus('浏览器不允许分析这段试听的频谱（跨域限制），现在只能直接播放。想看曲线，可以把自己的音频文件拖进来。','warn');}
 }
 function blockedMsg(q){return '在 claude.ai 网页里，安全设置不允许页面直接连 Apple Music。把 index.html 下载下来，用浏览器打开就能直接试听和解构。现在可以：<a href="'+amSearch(q)+'" target="_blank" rel="noopener">去 Apple Music 听 ↗</a>，或者把自己的音频拖进来。';}
@@ -399,10 +399,10 @@ function play(){
   if(L.media){L.media.pause();L.media=null;}
   if(!clip.buf||!ac())return;stop();const s=ctx.createBufferSource();s.buffer=clip.buf;s.loop=L.loop;s.loopStart=clip.a;s.loopEnd=clip.b;s.connect(gainN);
   if(L.loop)s.start(0,clip.a);else s.start(0,clip.a,clip.b-clip.a);
-  L.src=s;L.t0=ctx.currentTime;L.playing=true;s.onended=()=>{if(L.src===s){L.playing=false;L.src=null;syncTransport();drawStatic();}};
+  L.src=s;L.t0=ctx.currentTime;L.playing=true;if(window.MUSIC)MUSIC.duck(true);s.onended=()=>{if(L.src===s){L.playing=false;L.src=null;if(window.MUSIC)MUSIC.duck(false);syncTransport();drawStatic();}};
   syncTransport();kick();
 }
-function stop(){if(L.src){const s=L.src;L.src=null;try{s.stop();}catch(e){}}if(L.media){L.media.pause();L.media=null;}L.playing=false;syncTransport();}
+function stop(){if(L.src){const s=L.src;L.src=null;try{s.stop();}catch(e){}}if(L.media){L.media.pause();L.media=null;}L.playing=false;if(window.MUSIC)MUSIC.duck(false);syncTransport();}
 function syncTransport(){$('#lab-play').textContent=L.playing?'■ 停止':'▶ 播放选区';$('#lab-loop').classList.toggle('on',L.loop);}
 $('#lab-play').onclick=()=>{if(L.playing){stop();drawStatic();}else play();};
 $('#lab-loop').onclick=()=>{L.loop=!L.loop;syncTransport();if(L.playing)play();};
