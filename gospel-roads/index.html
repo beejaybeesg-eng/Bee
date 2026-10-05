@@ -1,7 +1,7 @@
 <title>福音之路</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Noto+Serif+SC:wght@600;900&display=swap">
 <style>
 /* Layout: a railroad of nine stations across the top; the map is the stage, the station dossier sits beside it; the vocal lab below reads like a hymnal index. Single deliberate night palette: indigo dye, brass, red clay, haint blue. */
 :root{
@@ -10,6 +10,7 @@
   --clay-fill:#70404a; --blue-fill:#2e5a67; --gold-fill:#6c5734;
   --f-display:"Noto Serif SC","Songti SC","STSong","SimSun",serif;
   --f-slab:"Alfa Slab One","Rockwell","Roboto Slab",Georgia,serif;
+  --f-mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
   --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
   color-scheme:dark;
 }
@@ -153,28 +154,112 @@ button{font:inherit;color:inherit}
 .done-banner{border:1px solid var(--gold);border-radius:14px;padding:14px 18px;background:var(--gold-fill);font-size:15px}
 .done-banner b{font-family:var(--f-display);font-size:18px}
 
-/* lab */
-.lab{display:flex;flex-direction:column;gap:14px;margin-top:10px}
-.lab-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px}
-.lab h2{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.4vw,36px);letter-spacing:.04em}
-.lab h2 .en{font-family:var(--f-slab);font-weight:400;font-size:14px;letter-spacing:.3em;color:var(--gold);margin-left:12px}
-.lab-head p{margin:0;color:var(--muted);max-width:60ch;font-size:14px}
-.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
-.lcard{padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:border-color .3s,box-shadow .3s}
-.lcard.playing{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,173,71,.15)}
-.lcard .top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
-.lcard h3{margin:0;font-family:var(--f-display);font-size:20px}
-.lcard h3 .en{display:block;font-family:var(--f-slab);font-weight:400;font-size:12px;letter-spacing:.14em;color:var(--gold)}
-.lcard .from{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 9px;white-space:nowrap}
-.lcard p{margin:0;font-size:14px;color:var(--muted)}
-.lcard .who{color:var(--cream);font-size:13.5px}
-.lcard .act{display:flex;align-items:center;gap:12px;margin-top:auto;padding-top:6px}
-.eq{display:inline-flex;gap:3px;align-items:flex-end;height:16px;opacity:0;transition:opacity .2s}
-.eq i{width:3px;background:var(--gold);height:4px;border-radius:1px}
-.playing .eq{opacity:1}
-.playing .eq i{animation:eq .7s ease-in-out infinite alternate}
-.eq i:nth-child(2){animation-delay:.15s!important}.eq i:nth-child(3){animation-delay:.3s!important}.eq i:nth-child(4){animation-delay:.45s!important}
-@keyframes eq{from{height:3px}to{height:16px}}
+[hidden]{display:none!important}
+/* modes */
+.modes{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--ink-2)}
+.mode{background:none;border:0;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--muted);font-size:14px}
+.mode.active{background:var(--gold);color:var(--ink);font-weight:700}
+.map-app{display:flex;flex-direction:column;gap:18px}
+.teaser{display:flex;gap:16px 28px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:20px 24px}
+.teaser h2{margin:4px 0 6px;font-family:var(--f-display);font-weight:900;font-size:clamp(22px,3vw,30px)}
+.teaser p{margin:0;color:var(--muted);max-width:62ch;font-size:14px}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.2em;color:var(--gold)}
+
+/* analyzer */
+.lab-app{display:flex;flex-direction:column;gap:16px}
+.lab-app.drag{outline:2px dashed var(--gold);outline-offset:6px;border-radius:16px}
+.lab-intro{display:flex;flex-wrap:wrap;gap:8px 28px;align-items:flex-end;justify-content:space-between}
+.lab-title{margin:4px 0 0;font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.6vw,38px);letter-spacing:.04em}
+.lab-intro p{margin:0;color:var(--muted);max-width:60ch;font-size:14px}
+.lab-grid{display:grid;grid-template-columns:230px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.lab-grid{grid-template-columns:minmax(0,1fr)}}
+.tlist{display:flex;flex-direction:column;gap:6px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:900px){.tlist{position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}}
+.tbtn{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;gap:0 8px;align-items:center;text-align:left;background:var(--ink-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer}
+@media (max-width:900px){.tbtn{min-width:150px}}
+.tbtn:hover{border-color:var(--gold)}
+.tbtn.active{background:var(--ink-3);border-color:var(--gold);box-shadow:inset 3px 0 0 var(--gold)}
+.tbtn .tz{font-family:var(--f-display);font-weight:600;font-size:16px}
+.tbtn .te{grid-column:1;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.tbtn .tspark{grid-column:2;grid-row:1/3;width:64px;height:18px;opacity:.75}
+.tbtn.active .tspark{opacity:1}
+.lab-main{display:flex;flex-direction:column;gap:16px;min-width:0}
+.lab-main .card{padding:16px 18px;min-width:0}
+.th{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:18px}
+@media (max-width:700px){.th{grid-template-columns:minmax(0,1fr)}}
+.th-era{font-family:var(--f-mono);font-size:11.5px;color:var(--gold);letter-spacing:.08em}
+.th-name{margin:4px 0 6px;font-family:var(--f-display);font-weight:900;font-size:30px;line-height:1.2}
+.th-name .en{display:block;font-family:var(--f-mono);font-weight:400;font-size:13px;color:var(--muted);letter-spacing:.06em}
+.th-d{margin:0 0 12px;max-width:62ch}
+.th-body{margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px}
+@media (max-width:520px){.th-body{grid-template-columns:minmax(0,1fr)}}
+.th-body dt{font-size:12px;letter-spacing:.16em;color:var(--gold)}
+.th-body dd{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+.th-fig{display:flex;flex-direction:column;gap:8px}
+.glottis{width:100%;max-width:250px;height:auto;background:#0f1020;border-radius:12px;align-self:center}
+.gl-ae{fill:#2a1f2c;stroke:var(--clay);stroke-width:2;transition:rx .5s,ry .5s}
+.gl-v{fill:#5a2f39;transition:opacity .4s}
+.gl-f{fill:#e8d6bd;stroke:#b79e86;stroke-width:1}
+.gl-gap{fill:#05060c}
+.gl-t{fill:var(--muted);font-size:10px;font-family:var(--f-body)}
+.gl-cap{font-size:11.5px;color:var(--muted);line-height:1.5}
+.meters{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)}
+.meters span{display:flex;justify-content:space-between}
+.meters b{font-family:var(--f-mono);color:var(--cream);font-weight:400}
+.meters i{display:block;height:6px;background:var(--ink-3);border-radius:3px;overflow:hidden}
+.meters em{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .5s}
+.deck-row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.deck-row label.btn{display:inline-block}
+.deck-name{flex:1 1 200px;min-width:0;display:flex;flex-direction:column;font-size:13px}
+.deck-name b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.deck-name a,.status a,.refs a:not(.mini){color:var(--gold)}
+.deck-tr{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mono{font-family:var(--f-mono);font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+canvas{display:block;max-width:100%}
+.cv-ov{width:100%;height:64px;margin-top:12px;border-radius:8px;cursor:crosshair;touch-action:none}
+.cv-eq{width:100%;height:clamp(220px,32vw,340px)}
+.cv-sg{width:100%;height:230px;border-radius:8px}
+.cv-scope{width:100%;height:110px;border-radius:8px}
+.cv-meter{width:100%;height:22px;border-radius:4px;margin-top:8px}
+.status{font-size:13px;margin-top:8px;min-height:1em}
+.status.err{color:var(--clay)} .status.warn{color:var(--gold)} .status.ok{color:var(--blue)}
+.lab-app .hint{font-size:12px;color:var(--muted);margin-top:6px}
+.cardh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;margin-bottom:10px;font-size:14px}
+.cardh b{font-weight:700}
+.cardh.sp{margin-top:16px}
+.dim{color:var(--muted);font-size:12px}
+.lg{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:12px;color:var(--muted)}
+.lg i{display:inline-block;width:18px;height:3px;border-radius:2px;margin-left:8px}
+.lg .l-ref{background:repeating-linear-gradient(90deg,var(--blue) 0 5px,transparent 5px 8px)}
+.lg .l-clip{background:var(--gold)} .lg .l-live{background:var(--cream)}
+.lg .l-c1{background:var(--cream)} .lg .l-c2{background:var(--gold)} .lg .l-c3{background:var(--clay)}
+.bands{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 16px;margin-top:12px}
+@media (max-width:640px){.bands{grid-template-columns:minmax(0,1fr)}}
+.bb{display:grid;grid-template-columns:96px minmax(0,1fr) 40px;gap:8px;align-items:center;font-size:12.5px}
+.bb-n span{display:block;font-family:var(--f-mono);font-size:10.5px;color:var(--muted)}
+.bb-t{position:relative;height:8px;background:var(--ink-3);border-radius:4px}
+.bb-c{position:absolute;left:0;top:0;bottom:0;background:var(--gold);border-radius:4px;transition:width .25s}
+.bb-r{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--blue);transform:translateX(-1px);transition:left .4s}
+.bb-v{font-family:var(--f-mono);font-size:12px;text-align:right;color:var(--cream)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+@media (max-width:480px){.stats{grid-template-columns:minmax(0,1fr)}}
+.st-k{font-size:12px;color:var(--muted);letter-spacing:.06em}
+.st-v{font-family:var(--f-mono);font-size:19px;color:var(--gold);font-variant-numeric:tabular-nums}
+.st-d{font-size:11.5px;color:var(--muted);line-height:1.5}
+.empty{margin:0;color:var(--muted);font-size:13.5px}
+.live{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+.live span{display:block;font-size:11px;color:var(--muted)}
+.live b{font-family:var(--f-mono);font-weight:400;font-size:16px;color:var(--cream)}
+.live em{display:block;font-style:normal;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.watch{margin:0;padding-left:18px;font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.refs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.refs li{display:flex;flex-direction:column;gap:4px;padding-top:12px;border-top:1px solid #2d3359}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs .rt{font-weight:700;font-size:14px}
+.refs .rw,.refs .rs{font-size:13px;color:var(--muted)}
+.refs .ra{display:flex;gap:8px;flex-wrap:wrap}
 footer{color:var(--muted);font-size:12.5px;line-height:1.7;border-top:1px solid var(--line);padding-top:16px;max-width:90ch}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
@@ -186,11 +271,13 @@ footer{color:var(--muted);font-size:12.5px;line-height:1.7;border-top:1px solid 
       <h1>福音之路<span class="en">GOSPEL ROADS</span></h1>
     </div>
     <div class="side">
+      <div class="modes" role="tablist" aria-label="模式"><button class="mode" type="button" data-mode="map">历史地图</button><button class="mode" type="button" data-mode="lab">唱腔解构器</button></div>
       <span class="score" id="score">★ 0 / 9</span>
       <button class="btn" id="tour" type="button">▶ 自动导览</button>
     </div>
   </header>
 
+  <div id="map-app" class="map-app">
   <nav class="rail-scroll" aria-label="历史站点">
     <div class="rail" id="rail">
       <svg class="train" id="train" viewBox="0 0 46 26" aria-hidden="true"><path d="M4 6h20v4h6V4h6v6h4l4 6v4H2V8z" fill="#e8ad47"/><rect x="7" y="9" width="7" height="5" rx="1" fill="#141628"/><circle cx="10" cy="21" r="3.2" fill="#f2e8d2" stroke="#141628" stroke-width="1.5"/><circle cx="22" cy="21" r="3.2" fill="#f2e8d2" stroke="#141628" stroke-width="1.5"/><circle cx="35" cy="21" r="3.2" fill="#f2e8d2" stroke="#141628" stroke-width="1.5"/><rect x="31" y="0" width="4" height="4" fill="#e8ad47"/></svg>
@@ -224,16 +311,105 @@ footer{color:var(--muted);font-size:12.5px;line-height:1.7;border-top:1px solid 
     </div>
   </section>
 
-  <section class="lab" id="lab">
-    <div class="lab-head">
-      <h2>唱腔实验室<span class="en">VOCAL LAB</span></h2>
-      <p>每一种唱腔都标了它从哪个时代来。点“播放示范”听一段合成器做的示意，帮助你听清结构，然后去听卡片里推荐的真实录音。</p>
+  <section class="card teaser">
+    <div>
+      <div class="eyebrow">VOCAL ANATOMY &amp; FREQUENCY VISUALIZER</div>
+      <h2>唱腔与频段解构器</h2>
+      <p>十种黑人音乐的核心唱腔：原始呼喊、布鲁斯滑音、气声呢喃、嘶吼、胸声强混、假声、转音……看它们在身体里怎么发生，再用真实唱片测出它们的频段、动态和音高。</p>
     </div>
-    <div class="lgrid" id="lgrid"></div>
+    <button class="btn primary" type="button" data-mode="lab">进入解构器 →</button>
+  </section>
+  </div>
+
+  <section id="lab-app" class="lab-app" hidden>
+    <div class="lab-intro">
+      <div>
+        <div class="eyebrow">VOCAL ANATOMY &amp; FREQUENCY VISUALIZER</div>
+        <h2 class="lab-title">唱腔与频段解构器</h2>
+      </div>
+      <p>左边选一种唱腔，看它在身体里怎么发生、参考频谱长什么样。然后载入真实的声音（推荐唱片的 Apple Music 试听，或者你自己的音频文件），对比实测曲线和参考曲线。</p>
+    </div>
+    <div class="lab-grid">
+      <aside class="tlist" id="tlist" aria-label="唱腔"></aside>
+      <div class="lab-main">
+        <div class="card th">
+          <div class="th-text">
+            <div class="th-era" id="th-era"></div>
+            <h3 class="th-name" id="th-name"></h3>
+            <p class="th-d" id="th-d"></p>
+            <dl class="th-body" id="th-body"></dl>
+          </div>
+          <div class="th-fig">
+            <svg viewBox="0 0 220 180" class="glottis" role="img" aria-label="声门俯视示意">
+              <ellipse id="gl-ae" cx="110" cy="90" rx="96" ry="78" class="gl-ae"/>
+              <path id="gl-vL" class="gl-v" d="M28,44 Q46,90 32,146 L58,146 Q68,90 50,44Z"/>
+              <path id="gl-vR" class="gl-v" d="M192,44 Q174,90 188,146 L162,146 Q152,90 170,44Z"/>
+              <path id="gl-gap" class="gl-gap"/>
+              <path id="gl-L" class="gl-f"/>
+              <path id="gl-R" class="gl-f"/>
+              <text x="110" y="20" class="gl-t" text-anchor="middle">前</text>
+              <text x="110" y="174" class="gl-t" text-anchor="middle">后</text>
+            </svg>
+            <div class="gl-cap">声门俯视图（慢放示意）：浅色是声带，黑色是气流通过的声门，外侧暗红是室带，外圈是杓会厌区</div>
+            <div class="meters">
+              <div><span>闭合商 CQ <b id="m-cqv"></b></span><i><em id="m-cq"></em></i></div>
+              <div><span>喉位 低 → 高</span><i><em id="m-lar"></em></i></div>
+              <div><span>声门下压</span><i><em id="m-ps"></em></i></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card deck">
+          <div class="deck-row">
+            <label class="btn" for="lab-file">载入音频文件</label>
+            <input type="file" id="lab-file" accept="audio/*,.m4a,.mp3,.wav,.aac,.flac,.ogg" hidden>
+            <div class="deck-name"><b id="lab-name">还没有载入声音</b><span id="lab-src"></span></div>
+            <div class="deck-tr">
+              <button class="btn primary" id="lab-play" type="button" disabled>▶ 播放选区</button>
+              <button class="btn on" id="lab-loop" type="button">循环</button>
+              <span class="mono" id="lab-time">0:00.0 / 0:00.0</span>
+              <button class="btn" id="lab-save" type="button" disabled>保存到片段库</button>
+            </div>
+          </div>
+          <canvas id="lab-ov" class="cv-ov"></canvas>
+          <div class="status" id="lab-status"></div>
+          <div class="hint">在波形上拖动选一段（最长 30 秒）。也可以把音频文件直接拖进这个页面。</div>
+        </div>
+
+        <div class="card cv-card">
+          <div class="cardh"><b>均衡曲线 · 能量分布</b><span class="lg"><i class="l-ref"></i>参考曲线（示意）<i class="l-clip"></i>本片段平均<i class="l-live"></i>实时</span></div>
+          <canvas id="lab-eq" class="cv-eq"></canvas>
+          <div class="bands" id="lab-bands"></div>
+          <div class="hint">条形：每个频段占的能量比例（实测）。竖线：参考唱腔的比例。</div>
+        </div>
+
+        <div class="two">
+          <div class="card cv-card"><div class="cardh"><b>能量流动 · 频谱图</b><span class="dim">越亮能量越强</span></div><canvas id="lab-sg" class="cv-sg"></canvas></div>
+          <div class="card cv-card"><div class="cardh"><b>音高轨迹</b><span class="lg"><i class="l-c1"></i>清亮<i class="l-c2"></i>略沙<i class="l-c3"></i>沙 / 气声</span></div><canvas id="lab-pt" class="cv-sg"></canvas></div>
+        </div>
+
+        <div class="two">
+          <div class="card"><div class="cardh"><b>实测</b><span class="dim">整段选区</span></div><div class="stats" id="lab-stats"></div></div>
+          <div class="card">
+            <div class="cardh"><b>波形震颤 · 实时</b></div>
+            <canvas id="lab-scope" class="cv-scope"></canvas>
+            <div class="live"><div><span>音高</span><b id="lv-f0">—</b><em id="lv-hz"></em></div><div><span>HNR</span><b id="lv-hnr">—</b></div><div><span>RMS dBFS</span><b id="lv-rms">—</b></div><div><span>峰值 dBFS</span><b id="lv-pk">—</b></div></div>
+            <canvas id="lab-meter" class="cv-meter"></canvas>
+            <div class="cardh sp"><b>观察要点</b></div>
+            <ul class="watch" id="th-watch"></ul>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="card"><div class="cardh"><b>推荐唱片</b><span class="dim">Apple Music 30 秒试听</span></div><ul class="refs" id="lab-refs"></ul></div>
+          <div class="card"><div class="cardh"><b>我的片段库</b><span class="dim">只存在这个浏览器里</span></div><ul class="refs" id="lab-lib"></ul></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <footer>
-    资料说明：大西洋奴隶贸易的人数是“跨大西洋奴隶贸易数据库”（Slave Voyages）的估算值；大迁徙约600万人的数字来自美国人口普查的研究。地图上的路线是示意，不是精确航线。实验室里的声音是浏览器合成的简化示范，不代表真实人声。“聆听”和“电影”旁边的链接会在新页面打开 YouTube 或豆瓣的搜索结果。
+    资料说明：大西洋奴隶贸易的人数是“跨大西洋奴隶贸易数据库”（Slave Voyages）的估算值；大迁徙约600万人的数字来自美国人口普查的研究。地图上的路线是示意，不是精确航线。唱腔解构器不内置任何唱片音频：试听片段由 Apple Music 提供，你载入的文件只在你自己的浏览器里分析和保存，不会上传。参考曲线和声门图是根据嗓音科学常识画的示意，不是测量结果。“聆听”和“电影”旁边的链接会在新页面打开 YouTube 或豆瓣的搜索结果。
   </footer>
 </div>
 
@@ -284,21 +460,6 @@ const CITIES = {
   newark:{zh:'纽瓦克',en:'Newark, NJ',d:'惠特尼·休斯顿在新希望浸信会的唱诗班长大，母亲西茜·休斯顿是那里的音乐指导。',lab:{us:'r'}},
   fortworth:{zh:'沃斯堡',en:'Fort Worth, TX',d:'柯克·富兰克林的家乡。他把嘻哈节奏带进了福音合唱。',lab:{us:'l'}}
 };
-
-// 唱腔实验室
-const LAB = [
-  {id:'call',zh:'呼应',en:'Call & Response',from:'西非',d:'领唱唱一句，众人回应一句。这是整条历史线上最核心的结构：非洲村落的劳动歌、种植园的号子、教会里牧师和会众的对答、福音合唱团、灵魂乐的伴唱，直到今天的演唱会互动。',who:'听：Mavis Staples 和 The Staple Singers；任何一场黑人教会的周日礼拜。'},
-  {id:'poly',zh:'复节奏',en:'Polyrhythm',from:'西非',d:'几条节奏同时进行，比如“三对二”。鼓被禁之后，节奏转进了身体：拍手、跺脚、拍打大腿（patting juba）。福音里“在二拍和四拍上拍手”就是这种身体节奏的后代。',who:'这段演示：低鼓走“二”，拍手走“三”，铃声是西非经典的12/8铃型。'},
-  {id:'lining',zh:'领唱填词',en:'Lining Out',from:'18世纪教会',d:'早期很多人不识字，也没有赞美诗集。领唱先快速念或唱出一句歌词，会众再用缓慢、拖长、装饰很多的方式齐唱这一句，每个人的装饰略有不同，形成“异音”的厚重效果。这种唱法也叫“Dr. Watts”或“长韵”（long meter）。',who:'听：搜索 “lined hymn” 或 “Dr. Watts hymn”；Aretha Franklin《Amazing Grace》专辑里有很多这种拖长的影子。'},
-  {id:'moan',zh:'哼吟',en:'Moan / Hum',from:'种植园与教会',d:'没有歌词的低声哼唱和呻吟，在音高之间慢慢滑动。它在祈祷、劳作、葬礼时出现，表达说不出口的东西。蓝调歌手和福音歌手都把“moan”看作最深的表达。',who:'听：Blind Willie Johnson《Dark Was the Night, Cold Was the Ground》（1927）。'},
-  {id:'blue',zh:'蓝调音',en:'Blue Notes',from:'非洲滑音 + 欧洲音阶',d:'在大调里把三音、七音（有时五音）降低一点，或者在大小调之间“弯”过去。演示先放一遍“直的”大调，再放一遍带弯音的蓝调版本，注意第三个音的区别。',who:'听：Bessie Smith、Mahalia Jackson 的任何一首慢歌。'},
-  {id:'melisma',zh:'转音',en:'Runs / Melisma',from:'领唱填词的装饰 + 福音',d:'一个字上唱很多个音，快速上下走。克拉拉·沃德、艾瑞莎·富兰克林、克拉克姐妹把它变成了技艺，后来成为R&B和流行歌手的标志。练习时要先慢、准，再加速。',who:'听：The Clark Sisters《You Brought the Sunshine》；Aretha Franklin《Amazing Grace》。'},
-  {id:'growl',zh:'嘶吼 / 沙音',en:'Growl & Grit',from:'硬福音四重唱',d:'在声音里加入粗糙的喉音、沙哑和颗粒感，表示情绪被推到极限。1940–50年代的四重唱领唱用它把全场推向高潮，后来被灵魂乐歌手直接继承。演示先放干净的长音，再放加了“沙”的同一个音。',who:'听：Archie Brownlee（Five Blind Boys of Mississippi）、Julius Cheeks、Wilson Pickett、James Brown。'},
-  {id:'falsetto',zh:'假声',en:'Falsetto',from:'四重唱领唱',d:'从胸声突然翻到轻、高、透的假声。天鹅银调的克劳德·杰特尔是代表，他影响了Smokey Robinson、Al Green、Curtis Mayfield。演示先唱一段低的胸声，再翻上去。',who:'听：The Swan Silvertones《Mary Don’t You Weep》（1959）；Al Green《Let’s Stay Together》。'},
-  {id:'vamp',zh:'循环推进',en:'Vamp & Ad-lib',from:'西非重复结构',d:'歌曲后段，乐队和合唱团反复循环一小段和弦与短句，领唱在上面即兴（ad-lib），一圈比一圈强，直到全场沸腾。演示里和弦循环四次，后两次加入了领唱的即兴。',who:'听：Otis Redding《Try a Little Tenderness》的结尾；Kirk Franklin 现场。'},
-  {id:'mod',zh:'升调',en:'Modulation',from:'福音合唱团',d:'同一段旋律反复唱，每次升高半音或全音，把情绪一级级往上推。福音合唱团非常爱用，流行乐里也随处可见。演示里同一句唱了四次，每次升高半音。',who:'听：Whitney Houston《I Will Always Love You》的最后一段升调。'},
-  {id:'shout',zh:'呼喊音乐',en:'Shout Music',from:'五旬节教会',d:'快速的节奏、手鼓、在二拍和四拍上的拍手、风琴的切分和弦，人们在这时“被圣灵充满”而跳动（holy dance / shouting）。这股能量后来变成了摇滚和放克。',who:'听：Sister Rosetta Tharpe《Strange Things Happening Every Day》（1944）；任何COGIC教会的“praise break”。'}
-];
 
 const ERAS = [
 {
@@ -736,6 +897,460 @@ const STATE_NOTES = {
   'North Carolina':'大迁徙中许多人沿东海岸去了纽约和费城；今天又是回流南方的热门目的地。'
 };
 
+/* ===== 唱腔与频段解构器 Vocal Anatomy & Frequency Visualizer ===== */
+// 参考曲线是示意的典型频谱轮廓（相对峰值的 dB），不是测量结果。
+// g: 声门示意参数  cq 闭合商 / gap 后部漏气缝 / amp 振幅 / thin 薄边振动 / vent 室带参与 / ae 杓会厌收窄 / lar 喉位 / ps 声门下压
+const TECH = [
+  {id:'holler',zh:'原始呼喊',en:'Field Holler / Shout',era:'种植园 → 硬福音',
+   d:'一个人在田野里放开喉咙的长声呼喊：高声压、长距离传送、在胸声和假声之间猛地翻转。它是蓝调、福音“shout”和灵魂乐尖叫的共同祖先。',
+   body:{glottis:'声带厚、闭合有力，声门下压很高。翻转时声带突然变薄，进入假声。',larynx:'喉位偏高，声道变短，元音更“亮”。',tract:'嘴张大，咽腔收紧，能量推向 600 Hz–3 kHz。',breath:'一口气冲出去，起音突然、音量落差大。'},
+   watch:['音高轨迹里会出现大跨度的滑动和突然的跳变（胸声→假声的翻转）','动态范围很大：起音处电平急升','频谱能量集中在 500 Hz–3 kHz 的“穿透带”'],
+   curve:[[60,-40],[100,-26],[180,-12],[350,-4],[650,0],[1200,-3],[2500,-6],[3500,-10],[6000,-22],[10000,-34],[16000,-50]],
+   g:{cq:.55,gap:0,amp:1,lar:.82,ps:.95,ae:.4},
+   refs:[{q:'Arwhoolie Cornfield Holler',t:'Thomas J. Marshall — Arwhoolie (Cornfield Holler)（1939，国会图书馆田野录音）',w:'整首都是无伴奏的田野呼喊，注意长音结尾的假声翻转'},{t:'The Five Blind Boys of Mississippi — Our Father（1950）',w:'Archie Brownlee 的尖叫段落'},{t:'Mahalia Jackson — Didn’t It Rain',w:'她在高潮处的呼喊式长音'}]},
+  {id:'bend',zh:'布鲁斯滑音',en:'Blue-note Bend',era:'蓝调 → 福音 → 灵魂乐',
+   d:'声音从一个音“弯”进另一个音，或者停在大调和小调之间。三音、七音常被唱成介于半音之间的“中性”音高，这就是蓝调音。',
+   body:{glottis:'正常闭合，音色不是重点，重点是环甲肌对声带张力的连续、细微控制。',larynx:'中位、稳定，不能因为滑音乱动。',tract:'元音保持不变，只有音高在动。',breath:'稳定的气流支撑缓慢的滑动。'},
+   watch:['音高轨迹里看从下往上“爬”进目标音的弧线','停在两条半音格线之间的音：那就是中性三度或七度','把同一句话唱成“直的”再对比'],
+   curve:[[60,-36],[100,-20],[200,-6],[400,0],[800,-5],[1600,-10],[3000,-12],[5000,-24],[9000,-36],[16000,-52]],
+   g:{cq:.45,gap:.1,amp:.6,lar:.5,ps:.55,ae:.2},
+   refs:[{t:'Bessie Smith — St. Louis Blues（1925）',w:'1925 年发行，在美国已经进入公有领域。听她每句开头怎么滑进音'},{t:'Mahalia Jackson — Take My Hand, Precious Lord',w:'慢板中几乎每个长音都在弯'},{t:'Blind Willie Johnson — Dark Was the Night（1927）',w:'人声和滑棒吉他一起滑'}]},
+  {id:'breathy',zh:'气声呢喃',en:'Breathy Croon',era:'灵魂乐 → 新灵魂乐',
+   d:'声带没有完全合拢，气流从缝隙里漏出来，声音软、近、私密，像贴着耳朵说话。灵魂乐的情歌和新灵魂乐大量使用。',
+   body:{glottis:'后部留有一道三角形缝隙，闭合商很低，大量气流变成噪声。',larynx:'中低位，放松。',tract:'嘴型小，能量集中在基频附近，高频是“嘶嘶”的气声。',breath:'气流大、压力小，音量很弱，常离麦克风很近。'},
+   watch:['谐噪比 HNR 明显变低（通常低于 10 dB）','频谱图里谐波线之间有一层雾状噪声，尤其在 4 kHz 以上','均衡曲线高频不是陡降，而是有一片“空气”平台'],
+   curve:[[60,-30],[120,-8],[220,0],[450,-8],[900,-18],[1800,-26],[3500,-30],[6000,-30],[9000,-33],[16000,-48]],
+   g:{cq:.18,gap:.85,amp:.45,lar:.4,ps:.28,ae:0},
+   refs:[{t:'Al Green — Let’s Stay Together（1971）',w:'主歌部分的轻声和气声'},{t:'D’Angelo — Untitled (How Does It Feel)（2000）',w:'几乎全程的气声假声'},{t:'Marvin Gaye — Let’s Get It On（1973）',w:'低声的呢喃段落'}]},
+  {id:'moan',zh:'哼吟',en:'Hum / Moan',era:'种植园 → 教会长韵',
+   d:'闭着嘴或半闭着嘴的低吟。声音从鼻腔出来，像祷告一样，没有歌词。教会的“长韵”赞美诗和蓝调都用它开场。',
+   body:{glottis:'正常闭合，音量小。',larynx:'偏低，放松。',tract:'嘴唇闭合，软腭放下，声音走鼻腔：约 1 kHz 附近出现一个“凹陷”（反共振）。',breath:'慢、长、均匀。'},
+   watch:['能量几乎都在 500 Hz 以下','均衡曲线在 1 kHz 左右有明显的凹陷','音高缓慢滑动，很少有跳跃'],
+   curve:[[60,-22],[110,-4],[230,0],[400,-6],[700,-18],[1000,-30],[1500,-26],[2500,-34],[4000,-44],[8000,-56],[16000,-66]],
+   g:{cq:.45,gap:.1,amp:.4,lar:.35,ps:.3,ae:.1},
+   refs:[{t:'Blind Willie Johnson — Dark Was the Night, Cold Was the Ground（1927）',w:'整首几乎只有哼吟'},{t:'Aretha Franklin — Amazing Grace（1972 现场）',w:'同名曲的开头，艾瑞莎的长韵式低吟'},{t:'Mahalia Jackson — In the Upper Room',w:'开头的哼吟和缓慢进入',q:'Mahalia Jackson In the Upper Room'}]},
+  {id:'growl',zh:'嘶吼 / 沙音',en:'Growl & Grit',era:'硬福音四重唱 → 灵魂乐',
+   d:'在声音里加入粗糙的颗粒和咆哮。真声带之上的室带（假声带）和杓会厌结构被带着一起振动，产生不规则的次谐波和噪声。情绪被推到了极限。',
+   body:{glottis:'真声带闭合有力，上方的室带也跟着振动（通常是真声带频率的一半或不规则）。',larynx:'偏高，收紧。',tract:'杓会厌区收窄，喉咙“挤”起来，高频变亮、变粗。',breath:'声门下压很高，必须靠强支撑，不然很伤嗓子。'},
+   watch:['频谱图里在谐波之间出现额外的线（次谐波，常在基频的一半）','谐噪比 HNR 下降，次谐波指标升高','示波器里的波形不再整齐重复，周期忽大忽小'],
+   curve:[[60,-20],[100,-10],[200,-3],[400,0],[800,-2],[1600,-4],[3000,-6],[5000,-14],[8000,-24],[16000,-40]],
+   g:{cq:.5,gap:.1,amp:.9,lar:.72,ps:.88,ae:.65,vent:true},
+   refs:[{t:'The Sensational Nightingales — Burying Ground',w:'Julius Cheeks 的沙哑领唱',q:'Sensational Nightingales Burying Ground'},{t:'Wilson Pickett — In the Midnight Hour（1965）',w:'灵魂乐对硬福音的直接继承'},{t:'James Brown — Please, Please, Please（1956）',w:'尖叫和嘶吼'}]},
+  {id:'belt',zh:'胸声强混',en:'Gospel Belt',era:'福音合唱 → 灵魂乐 → 流行',
+   d:'用胸声的力量唱到很高的音，声音明亮、厚、穿透力强。福音女声的招牌，后来成了流行天后的标配。',
+   body:{glottis:'闭合商很高：声带在每个振动周期里有一半以上的时间是合拢的。',larynx:'偏高，但不卡死。',tract:'嘴张大，第一共振峰被“调”到第二谐波上，元音偏开（“啊”“诶”）。',breath:'声门下压很高，声压可以非常大。'},
+   watch:['2–4 kHz 的“穿透带”能量很强','谐噪比很高，谐波线又直又多，一直延伸到 5 kHz 以上','基频通常很高（女声常在 G4–G5 一带）'],
+   curve:[[60,-40],[100,-26],[200,-10],[400,-2],[700,0],[1200,-3],[2500,-5],[3500,-7],[5000,-18],[8000,-30],[16000,-46]],
+   g:{cq:.64,gap:0,amp:.95,lar:.75,ps:.92,ae:.5},
+   refs:[{t:'Mahalia Jackson — Move On Up a Little Higher（1948）',w:'高潮处的强混'},{t:'Aretha Franklin — Ain’t No Way（1968）',w:'副歌'},{t:'Whitney Houston — I Will Always Love You（1992）',w:'升调后的最后一段'}]},
+  {id:'falsetto',zh:'假声',en:'Falsetto & Flip',era:'四重唱领唱 → 灵魂乐',
+   d:'声带被拉长变薄，只有边缘振动，几乎不完全合拢。声音轻、高、透。福音四重唱的领唱用它制造飘起来的效果，灵魂乐男歌手继承了下来。',
+   body:{glottis:'只有薄薄的声带边缘接触，闭合时间很短甚至不闭合。',larynx:'中位或略高。',tract:'高次谐波很弱，声音集中在基频和头两个谐波。',breath:'需要比想象中更多的气，不然会断。'},
+   watch:['从胸声翻上来的瞬间：音高跳变，同时 2–4 kHz 能量突然减少','谐波线很少，只有下面几条清楚','均衡曲线高频陡降'],
+   curve:[[60,-50],[150,-30],[300,-6],[500,0],[900,-8],[1800,-20],[3000,-28],[5000,-34],[8000,-40],[16000,-56]],
+   g:{cq:.15,gap:.3,amp:.35,lar:.55,ps:.45,ae:.1,thin:true},
+   refs:[{t:'The Swan Silvertones — Mary Don’t You Weep（1959）',w:'Claude Jeter 的假声领唱'},{t:'Al Green — Let’s Stay Together（1971）',w:'副歌里的假声上扬'},{t:'Curtis Mayfield — People Get Ready（1965）',w:'柔和的高位男声'}]},
+  {id:'runs',zh:'转音',en:'Runs / Melisma',era:'福音 → R&B',
+   d:'一个字上唱很多个音，快速上下走。是福音女声最炫的技术，克拉克姐妹把它推到极限，后来成了 R&B 的标志。',
+   body:{glottis:'闭合中等，靠声带张力的快速变化完成，每个音都要“落地”。',larynx:'尽量稳定，喉位乱跳就会糊。',tract:'元音固定，不随音高改变。',breath:'稳定、持续，不能每个音都推一下气。'},
+   watch:['音高轨迹里一串快速的台阶：数一数每秒几个音','“音符变化/秒”指标：快的转音可以超过每秒 8 个','好的转音每个台阶都是平的；糊的转音是一条波浪线'],
+   curve:[[60,-38],[100,-24],[200,-8],[400,-1],[700,0],[1300,-4],[2500,-8],[3500,-11],[5000,-22],[9000,-34],[16000,-50]],
+   g:{cq:.45,gap:.05,amp:.6,lar:.55,ps:.6,ae:.3},
+   refs:[{t:'The Clark Sisters — You Brought the Sunshine（1981）',w:'整首都是教科书'},{t:'Aretha Franklin — Amazing Grace（1972 现场）',w:'每个长音结尾的装饰'},{t:'The Clara Ward Singers — Surely God Is Able（1949）',w:'艾瑞莎模仿过的转音来源'}]},
+  {id:'vibrato',zh:'福音颤音',en:'Gospel Vibrato',era:'福音 → 灵魂乐',
+   d:'音高有规律地上下摆动。福音歌手常先唱一段直音，再在长音后半段放出宽而慢的颤音，或者随情绪加宽加快。',
+   body:{glottis:'正常闭合，声带张力有节奏地起伏（环甲肌和甲杓肌交替）。',larynx:'放松，不能用喉头去抖。',tract:'稳定。',breath:'稳定支撑，颤音是放出来的，不是压出来的。'},
+   watch:['音高轨迹里的正弦波：频率（每秒几次）和宽度（上下多少音分）','“颤音”指标：通常 5–7 次/秒，宽度 ±50–150 音分','注意颤音是不是在长音中途才开始（延迟颤音）'],
+   curve:[[60,-38],[100,-22],[200,-8],[400,-1],[650,0],[1200,-4],[2500,-6],[3500,-9],[5000,-20],[9000,-33],[16000,-48]],
+   g:{cq:.5,gap:.05,amp:.7,lar:.5,ps:.7,ae:.3,vib:true},
+   refs:[{t:'Mahalia Jackson — Move On Up a Little Higher（1948）',w:'宽而慢的颤音'},{t:'Marion Williams — Packin’ Up',w:'Ward Singers 出身，颤音与高音呼喊'},{t:'Sam Cooke（与灵魂激动者）— Touch the Hem of His Garment（1956）',w:'长音尾部的颤音'}]},
+  {id:'twang',zh:'鼻腔金属音',en:'Twang / Ring',era:'布道“whoop” → 四重唱 → 灵魂乐',
+   d:'把喉咙上方的杓会厌区收窄，声音变得尖、亮、有金属感，不用更大力气就能穿透整个教堂。黑人布道者结尾的吟唱式布道（whooping）大量使用。',
+   body:{glottis:'正常闭合。',larynx:'偏高。',tract:'杓会厌括约肌收窄，形成一个小的共鸣管，把 2–4 kHz 大幅抬高。',breath:'不需要很大的压力，靠共鸣取得音量。'},
+   watch:['均衡曲线在 2.5–3.5 kHz 有一个突出的峰','“穿透带”能量占比明显升高','频谱重心比其他唱法高'],
+   curve:[[60,-44],[100,-26],[250,-14],[500,-8],[1000,-8],[2000,-2],[3000,0],[4000,-4],[6000,-18],[9000,-30],[16000,-46]],
+   g:{cq:.5,gap:0,amp:.7,lar:.72,ps:.62,ae:.95},
+   refs:[{q:'C.L. Franklin Eagle Stirreth Her Nest',t:'Rev. C.L. Franklin — The Eagle Stirreth Her Nest（布道录音）',w:'艾瑞莎父亲布道结尾的吟唱式“whoop”'},{t:'The Soul Stirrers — By and By（R.H. Harris 领唱时期）',w:'四重唱领唱的亮音',q:'Soul Stirrers By and By'},{t:'Aretha Franklin — Respect（1967）',w:'副歌里明亮的金属感'}]}
+];
+// 地图页“音乐与唱腔”里的旧编号 → 新唱腔
+const LABMAP={call:'holler',shout:'holler',blue:'bend',moan:'moan',lining:'moan',melisma:'runs',growl:'growl',falsetto:'falsetto',vamp:'belt',mod:'belt'};
+const BANDS=[
+  {k:'body',zh:'胸腔 / 基频',lo:70,hi:250},
+  {k:'warm',zh:'温暖',lo:250,hi:700},
+  {k:'vowel',zh:'元音 / 鼻腔',lo:700,hi:2000},
+  {k:'ring',zh:'穿透带',lo:2000,hi:4000},
+  {k:'pres',zh:'临场 / 齿音',lo:4000,hi:7500},
+  {k:'air',zh:'气息',lo:7500,hi:16000}
+];
+
+(function(){
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const reduced=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NOTE=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+const hz2midi=f=>69+12*Math.log2(f/440);
+const midiName=m=>{const r=Math.round(m);return NOTE[(r%12+12)%12]+(Math.floor(r/12)-1);};
+const FMIN=50,FMAX=16000,NP=240;
+const PF=Array.from({length:NP},(_,i)=>FMIN*Math.pow(FMAX/FMIN,i/(NP-1)));
+const fx=(f,W)=>W*Math.log(f/FMIN)/Math.log(FMAX/FMIN);
+const DBMIN=-66;
+const TC={};TECH.forEach(t=>TC[t.id]=t);
+
+/* ---------- state ---------- */
+const L={tech:TECH[0].id,ref:null,refFrom:null,refTo:null,morph:1,loop:true,playing:false,src:null,t0:0,media:null,blocked:false};
+const clip={buf:null,mono:null,sr:44100,name:'',a:0,b:0,origin:'',link:'',blob:null,preview:null};
+let A=null; // analysis of current selection
+let ctx=null,an=null,gainN=null,tdBuf=null,fqBuf=null,liveRanges=null;
+function ac(){
+  if(!ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;ctx=new C();
+    an=ctx.createAnalyser();an.fftSize=8192;an.smoothingTimeConstant=.5;gainN=ctx.createGain();gainN.connect(an);an.connect(ctx.destination);
+    tdBuf=new Float32Array(an.fftSize);fqBuf=new Float32Array(an.frequencyBinCount);
+    const bw=ctx.sampleRate/an.fftSize;liveRanges=PF.map(f=>[Math.max(1,Math.floor(f*Math.pow(2,-1/12)/bw)),Math.max(1,Math.ceil(f*Math.pow(2,1/12)/bw))]);}
+  if(ctx.state==='suspended')ctx.resume();return ctx;
+}
+
+/* ---------- reference curve ---------- */
+function refCurve(id){const c=TC[id].curve;return PF.map(f=>{
+  if(f<=c[0][0])return c[0][1];if(f>=c[c.length-1][0])return c[c.length-1][1];
+  for(let i=1;i<c.length;i++)if(f<=c[i][0]){const [f0,d0]=c[i-1],[f1,d1]=c[i];const t=Math.log(f/f0)/Math.log(f1/f0);return d0+(d1-d0)*t;}});}
+function bandShare(curve){const e=BANDS.map(()=>0);let tot=0;
+  PF.forEach((f,i)=>{if(f<BANDS[0].lo)return;const p=Math.pow(10,curve[i]/10)*f;BANDS.forEach((b,k)=>{if(f>=b.lo&&f<b.hi){e[k]+=p;tot+=p;}});});
+  return e.map(x=>tot?x/tot:0);}
+function similarity(a,b){let n=0,sa=0,sb=0;const xs=[],ys=[];PF.forEach((f,i)=>{if(f>=90&&f<=10000){xs.push(a[i]);ys.push(b[i]);}});
+  const ma=xs.reduce((s,x)=>s+x,0)/xs.length,mb=ys.reduce((s,x)=>s+x,0)/ys.length;let num=0,da=0,db=0;
+  xs.forEach((x,i)=>{num+=(x-ma)*(ys[i]-mb);da+=(x-ma)**2;db+=(ys[i]-mb)**2;});const r=num/Math.sqrt(da*db||1);return Math.max(0,r);}
+
+/* ---------- dsp ---------- */
+const fftCache={};
+function fft(re,im){const n=re.length;let T=fftCache[n];
+  if(!T){T={cos:new Float64Array(n/2),sin:new Float64Array(n/2),rev:new Uint32Array(n)};for(let i=0;i<n/2;i++){T.cos[i]=Math.cos(2*Math.PI*i/n);T.sin[i]=-Math.sin(2*Math.PI*i/n);}
+    const bits=Math.log2(n);for(let i=0;i<n;i++){let r=0,x=i;for(let b=0;b<bits;b++){r=(r<<1)|(x&1);x>>=1;}T.rev[i]=r;}fftCache[n]=T;}
+  for(let i=0;i<n;i++){const j=T.rev[i];if(j>i){let t=re[i];re[i]=re[j];re[j]=t;t=im[i];im[i]=im[j];im[j]=t;}}
+  for(let size=2;size<=n;size<<=1){const half=size>>1,step=n/size;
+    for(let i=0;i<n;i+=size)for(let j=0,k=0;j<half;j++,k+=step){const a=i+j,b=a+half;const tr=re[b]*T.cos[k]-im[b]*T.sin[k],ti=re[b]*T.sin[k]+im[b]*T.cos[k];re[b]=re[a]-tr;im[b]=im[a]-ti;re[a]+=tr;im[a]+=ti;}}}
+function yin(x,s,W,tmin,tmax,d){
+  for(let t=1;t<=tmax;t++){let sum=0;for(let i=0;i<W;i++){const v=x[s+i]-x[s+i+t];sum+=v*v;}d[t]=sum;}
+  let run=0;d[0]=1;for(let t=1;t<=tmax;t++){run+=d[t];d[t]=run?d[t]*t/run:1;}
+  let best=-1;for(let t=tmin;t<=tmax;t++){if(d[t]<.15){while(t+1<=tmax&&d[t+1]<d[t])t++;best=t;break;}}
+  if(best<0){let m=Infinity;for(let t=tmin;t<=tmax;t++)if(d[t]<m){m=d[t];best=t;}}
+  let tt=best;if(best>tmin&&best<tmax){const a=d[best-1],b=d[best],c=d[best+1],den=a+c-2*b;if(den>0)tt=best+(a-c)/(2*den);}
+  return [tt,Math.max(1e-4,Math.min(1,d[best]))];}
+const pct=(arr,p)=>{if(!arr.length)return NaN;const s=[...arr].sort((a,b)=>a-b);return s[Math.min(s.length-1,Math.max(0,Math.round(p*(s.length-1))))];};
+
+function analyze(){
+  if(!clip.mono)return;const sr=clip.sr;const i0=Math.floor(clip.a*sr),i1=Math.floor(clip.b*sr);const seg=clip.mono.subarray(i0,i1);const len=seg.length;
+  // pitch on a decimated copy
+  const D=Math.max(1,Math.round(sr/11025)),srp=sr/D,dl=Math.floor(len/D),ds=new Float32Array(dl);
+  for(let i=0;i<dl;i++){let s=0;for(let j=0;j<D;j++)s+=seg[i*D+j];ds[i]=s/D;}
+  const W=Math.round(srp*.025),tmin=Math.floor(srp/1300),tmax=Math.floor(srp/65),hopP=Math.round(srp*.01),dbuf=new Float32Array(tmax+2);
+  const nP=Math.max(0,Math.floor((dl-W-tmax)/hopP));const f0=new Float32Array(nP),ap=new Float32Array(nP),rmsP=new Float32Array(nP);
+  for(let k=0;k<nP;k++){const s=k*hopP;let e=0;for(let i=0;i<W;i++)e+=ds[s+i]*ds[s+i];rmsP[k]=10*Math.log10(e/W+1e-12);
+    const [tt,a]=yin(ds,s,W,tmin,tmax,dbuf);f0[k]=srp/tt;ap[k]=a;}
+  const rmax=Math.max(-120,...rmsP);const voiced=new Uint8Array(nP);for(let k=0;k<nP;k++)voiced[k]=(ap[k]<.25&&rmsP[k]>rmax-35)?1:0;
+  // spectral pass
+  const N=4096,hop=Math.round(sr*.02),nF=Math.max(1,Math.floor((len-N)/hop)+1),H=128,bw=sr/N;
+  const win=new Float64Array(N);for(let i=0;i<N;i++)win[i]=.5-.5*Math.cos(2*Math.PI*i/(N-1));
+  const re=new Float64Array(N),im=new Float64Array(N),ltas=new Float64Array(N/2);
+  const SG0=60,SG1=12000;const rows=Array.from({length:H},(_,r)=>{const f=SG1*Math.pow(SG0/SG1,r/(H-1));return [Math.max(1,Math.floor(f*Math.pow(2,-1/40)/bw)),Math.max(1,Math.ceil(f*Math.pow(2,1/40)/bw))];});
+  const sg=new Float32Array(nF*H),rmsF=new Float32Array(nF),peakAbs={v:0};let ltasN=0;const shr=[];
+  const rmsAll=[];for(let f=0;f<nF;f++){const s=f*hop;let e=0;for(let i=0;i<N;i++){const v=seg[s+i]||0;e+=v*v;}rmsF[f]=10*Math.log10(e/N+1e-12);}
+  const rfmax=Math.max(-120,...rmsF);
+  for(let f=0;f<nF;f++){const s=f*hop;for(let i=0;i<N;i++){const v=seg[s+i]||0;if(Math.abs(v)>peakAbs.v)peakAbs.v=Math.abs(v);re[i]=v*win[i];im[i]=0;}
+    fft(re,im);const pw=new Float64Array(N/2);for(let k=0;k<N/2;k++)pw[k]=re[k]*re[k]+im[k]*im[k];
+    if(rmsF[f]>rfmax-30){for(let k=0;k<N/2;k++)ltas[k]+=pw[k];ltasN++;}
+    for(let r=0;r<H;r++){const [b0,b1]=rows[r];let p=0;for(let k=b0;k<=b1&&k<N/2;k++)p+=pw[k];sg[f*H+r]=10*Math.log10(p/(b1-b0+1)+1e-14);}
+    // subharmonic ratio at this time
+    const kp=Math.round((s+N/2)/D/hopP);if(kp>=0&&kp<nP&&voiced[kp]){const F=f0[kp];const at=fr=>{const c=Math.round(fr/bw);let m=0;for(let k=c-1;k<=c+1;k++)if(k>0&&k<N/2)m=Math.max(m,pw[k]);return m;};
+      const sub=at(F/2)+at(1.5*F),har=at(F)+at(2*F);if(har>0)shr.push(10*Math.log10((sub+1e-14)/har));}}
+  const ltDb=PF.map(fq=>{const k0=Math.max(1,Math.floor(fq*Math.pow(2,-1/12)/bw)),k1=Math.max(k0,Math.ceil(fq*Math.pow(2,1/12)/bw));let p=0,n=0;for(let k=k0;k<=k1&&k<N/2;k++){p+=ltas[k];n++;}return 10*Math.log10(p/Math.max(1,n)/Math.max(1,ltasN)+1e-14);});
+  const lmax=Math.max(...ltDb);const ltCurve=ltDb.map(v=>Math.max(DBMIN-6,v-lmax));
+  let cn=0,cd=0;for(let k=1;k<N/2;k++){const fq=k*bw;if(fq<60||fq>12000)continue;cn+=fq*ltas[k];cd+=ltas[k];}
+  // pitch stats
+  const vf=[],vm=[];for(let k=0;k<nP;k++)if(voiced[k]){vf.push(f0[k]);vm.push(hz2midi(f0[k]));}
+  const hnrs=[];for(let k=0;k<nP;k++)if(voiced[k])hnrs.push(10*Math.log10((1-ap[k])/ap[k]));
+  // vibrato, note changes, glide
+  const tP=hopP/srp;let vibW=0,vibR=0,vibE=0,changes=0,vSec=0,glide=0;
+  let k=0;while(k<nP){if(!voiced[k]){k++;continue;}let e=k;while(e+1<nP&&voiced[e+1]&&Math.abs(hz2midi(f0[e+1])-hz2midi(f0[e]))<1.2)e++;
+    const n=e-k+1;vSec+=n*tP;const m=[];for(let i=k;i<=e;i++)m.push(hz2midi(f0[i]));
+    // note changes on a median-smoothed, quantised line
+    let last=null;for(let i=0;i<n;i++){const w=[m[Math.max(0,i-2)],m[i],m[Math.min(n-1,i+2)]].sort((a,b)=>a-b)[1];const q=Math.round(w);if(last!==null&&q!==last)changes++;last=q;}
+    const g30=Math.round(.3/tP);for(let i=0;i+g30<n;i+=2)glide=Math.max(glide,Math.abs(m[i+g30]-m[i]));
+    if(n*tP>=.6){const hw=Math.round(.125/tP);const res=[];for(let i=hw;i<n-hw;i++){let s=0;for(let j=i-hw;j<=i+hw;j++)s+=m[j];res.push((m[i]-s/(2*hw+1))*100);}
+      // 1 s windows, zero crossings counted with ±6 cent hysteresis so flat, noisy stretches don't count
+      const win=Math.round(1/tP),st=Math.round(.5/tP);
+      for(let w0=0;w0+win<=res.length;w0+=st){let sign=0,zc=0,ss=0;for(let i=w0;i<w0+win;i++){const v=res[i];ss+=v*v;if(v>6&&sign<=0){if(sign<0)zc++;sign=1;}else if(v<-6&&sign>=0){if(sign>0)zc++;sign=-1;}}
+        const rate=zc/2/(win*tP),ext=Math.sqrt(ss/win)*Math.SQRT2;
+        if(rate>=3.5&&rate<=9&&ext>=15){vibW+=1;vibR+=rate;vibE+=ext;}}}
+    k=e+1;}
+  const vr=rmsF.filter(v=>v>rfmax-45);
+  A={f0,ap,voiced,tP,nP,sg,nF,H,SG0,SG1,ltCurve,bands:bandShare(ltCurve),centroid:cd?cn/cd:NaN,
+    f0lo:pct(vm,.05),f0hi:pct(vm,.95),f0med:pct(vm,.5),hnr:pct(hnrs,.5),shr:pct(shr,.5),
+    vib:vibW>=1?{rate:vibR/vibW,ext:vibE/vibW}:null,density:vSec>.3?changes/vSec:NaN,glide,
+    dyn:vr.length?pct(vr,.95)-pct(vr,.1):NaN,crest:20*Math.log10(peakAbs.v+1e-9)-(vr.length?vr.reduce((s,x)=>s+x,0)/vr.length:0),voicedPct:nP?vf.length/nP:0};
+  drawStatic();renderStats();
+}
+
+/* ---------- canvases ---------- */
+function fit(c){const dpr=Math.min(2,window.devicePixelRatio||1);const w=c.clientWidth,h=c.clientHeight;if(c.width!==Math.round(w*dpr)||c.height!==Math.round(h*dpr)){c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);}const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);return [g,w,h];}
+const CS=getComputedStyle(document.documentElement);const tok=n=>CS.getPropertyValue(n).trim();
+const COL={ink:tok('--ink'),line:tok('--line'),cream:tok('--cream'),muted:tok('--muted'),gold:tok('--gold'),clay:tok('--clay'),blue:tok('--blue')};
+const PAD={l:40,r:10,t:22,b:22};
+function drawEQ(live){
+  const c=$('#lab-eq');const [g,w,h]=fit(c);g.clearRect(0,0,w,h);const W=w-PAD.l-PAD.r,Hh=h-PAD.t-PAD.b;
+  const X=f=>PAD.l+fx(f,W),Y=db=>PAD.t+Hh*(Math.min(0,Math.max(DBMIN,db))/DBMIN);
+  g.font='11px '+tok('--f-mono');g.textBaseline='middle';
+  BANDS.forEach((b,i)=>{g.fillStyle=i%2?'rgba(134,201,198,.035)':'rgba(232,173,71,.045)';g.fillRect(X(b.lo),PAD.t,X(b.hi)-X(b.lo),Hh);
+    g.fillStyle=b.k===curRefPeakBand()?COL.gold:COL.muted;g.textAlign='center';g.fillText(b.zh,(X(b.lo)+X(b.hi))/2,PAD.t-11);});
+  g.strokeStyle='rgba(120,128,180,.18)';g.lineWidth=1;g.fillStyle=COL.muted;
+  [0,-12,-24,-36,-48,-60].forEach(d=>{g.beginPath();g.moveTo(PAD.l,Y(d));g.lineTo(w-PAD.r,Y(d));g.stroke();g.textAlign='right';g.fillText(d,PAD.l-6,Y(d));});
+  [[100,'100'],[250,'250'],[500,'500'],[1000,'1k'],[2000,'2k'],[4000,'4k'],[8000,'8k'],[16000,'16k']].forEach(([f,t])=>{g.beginPath();g.moveTo(X(f),PAD.t);g.lineTo(X(f),PAD.t+Hh);g.stroke();g.textAlign='center';g.fillText(t,X(f),h-9);});
+  g.textAlign='left';g.fillText('dB',4,PAD.t-11);g.textAlign='right';g.fillText('Hz',w-PAD.r,h-9);
+  const path=(arr)=>{g.beginPath();PF.forEach((f,i)=>{const x=X(f),y=Y(arr[i]);i?g.lineTo(x,y):g.moveTo(x,y);});};
+  if(A){path(A.ltCurve);g.lineTo(X(FMAX),PAD.t+Hh);g.lineTo(X(FMIN),PAD.t+Hh);g.closePath();
+    const gr=g.createLinearGradient(0,PAD.t,0,PAD.t+Hh);gr.addColorStop(0,'rgba(232,173,71,.55)');gr.addColorStop(1,'rgba(232,173,71,.04)');g.fillStyle=gr;g.fill();
+    path(A.ltCurve);g.strokeStyle=COL.gold;g.lineWidth=1.6;g.stroke();}
+  if(L.ref){path(L.ref);g.setLineDash([6,5]);g.strokeStyle=COL.blue;g.lineWidth=2;g.stroke();g.setLineDash([]);}
+  if(live){path(live);g.strokeStyle=COL.cream;g.lineWidth=1.4;g.stroke();}
+}
+function curRefPeakBand(){if(!L.ref)return '';let m=-1e9,fm=0;PF.forEach((f,i)=>{if(L.ref[i]>m){m=L.ref[i];fm=f;}});const b=BANDS.find(b=>fm>=b.lo&&fm<b.hi);return b?b.k:'';}
+function cmap(v){const s=[[0,[20,22,40]],[.3,[48,52,112]],[.58,[214,105,76]],[.8,[232,173,71]],[1,[248,240,220]]];v=Math.max(0,Math.min(1,v));
+  for(let i=1;i<s.length;i++)if(v<=s[i][0]){const [a,ca]=s[i-1],[b,cb]=s[i];const t=(v-a)/(b-a);return ca.map((x,k)=>Math.round(x+(cb[k]-x)*t));}return s[s.length-1][1];}
+let sgImg=null;
+function buildSG(){if(!A)return sgImg=null;const off=document.createElement('canvas');off.width=A.nF;off.height=A.H;const g=off.getContext('2d');const img=g.createImageData(A.nF,A.H);
+  let mx=-1e9;for(const v of A.sg)if(v>mx)mx=v;const lo=mx-75;
+  for(let f=0;f<A.nF;f++)for(let r=0;r<A.H;r++){const c=cmap((A.sg[f*A.H+r]-lo)/75);const o=(r*A.nF+f)*4;img.data[o]=c[0];img.data[o+1]=c[1];img.data[o+2]=c[2];img.data[o+3]=255;}
+  g.putImageData(img,0,0);sgImg=off;}
+function drawSG(pos){
+  const c=$('#lab-sg');const [g,w,h]=fit(c);g.fillStyle=COL.ink;g.fillRect(0,0,w,h);const l=38;
+  g.font='11px '+tok('--f-mono');g.textBaseline='middle';
+  if(!sgImg){g.fillStyle=COL.muted;g.textAlign='center';g.fillText('载入一段声音，这里显示能量在每个频段里如何随时间流动',w/2,h/2);return;}
+  g.imageSmoothingEnabled=true;g.drawImage(sgImg,l,0,w-l,h);
+  const Yf=f=>h*Math.log(A.SG1/f)/Math.log(A.SG1/A.SG0);
+  g.fillStyle=COL.muted;g.textAlign='right';g.strokeStyle='rgba(242,232,210,.25)';g.setLineDash([3,4]);
+  [[100,'100'],[250,'250'],[700,'700'],[2000,'2k'],[4000,'4k'],[7500,'7.5k']].forEach(([f,t])=>{const y=Yf(f);g.fillText(t,l-5,y);if(f===2000||f===4000){g.beginPath();g.moveTo(l,y);g.lineTo(w,y);g.stroke();}});g.setLineDash([]);
+  if(pos!=null){const x=l+(w-l)*(pos-clip.a)/(clip.b-clip.a);g.strokeStyle=COL.cream;g.lineWidth=1.5;g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke();}
+}
+function drawPitch(pos,liveMidi){
+  const c=$('#lab-pt');const [g,w,h]=fit(c);g.fillStyle=COL.ink;g.fillRect(0,0,w,h);const l=38;
+  g.font='11px '+tok('--f-mono');g.textBaseline='middle';
+  if(!A||!isFinite(A.f0lo)){g.fillStyle=COL.muted;g.textAlign='center';g.fillText(A?'这段里没有找到清楚的人声音高':'音高轨迹：滑音、颤音、转音都会在这里现形',w/2,h/2);return;}
+  let lo=Math.floor(A.f0lo)-3,hi=Math.ceil(A.f0hi)+3;if(hi-lo<14){const m=(hi+lo)/2;lo=Math.floor(m-7);hi=Math.ceil(m+7);}
+  const Y=m=>h-6-(h-12)*(m-lo)/(hi-lo),X=k=>l+(w-l)*k/Math.max(1,A.nP-1);
+  for(let m=lo;m<=hi;m++){const isC=(m%12+12)%12===0;g.strokeStyle=isC?'rgba(232,173,71,.28)':'rgba(120,128,180,.13)';g.beginPath();g.moveTo(l,Y(m));g.lineTo(w,Y(m));g.stroke();
+    if(isC||(hi-lo<=20&&m%2===0)){g.fillStyle=isC?COL.gold:COL.muted;g.textAlign='right';g.fillText(midiName(m),l-5,Y(m));}}
+  g.lineWidth=2;g.lineCap='round';
+  for(let k=1;k<A.nP;k++){if(!A.voiced[k]||!A.voiced[k-1])continue;const m0=hz2midi(A.f0[k-1]),m1=hz2midi(A.f0[k]);if(Math.abs(m1-m0)>1.2)continue;
+    const hn=10*Math.log10((1-A.ap[k])/A.ap[k]);g.strokeStyle=hn>15?COL.cream:hn>8?COL.gold:COL.clay;g.beginPath();g.moveTo(X(k-1),Y(m0));g.lineTo(X(k),Y(m1));g.stroke();}
+  if(pos!=null){const x=l+(w-l)*(pos-clip.a)/(clip.b-clip.a);g.strokeStyle=COL.blue;g.lineWidth=1.5;g.beginPath();g.moveTo(x,0);g.lineTo(x,h);g.stroke();
+    if(liveMidi){g.fillStyle=COL.blue;g.beginPath();g.arc(x,Y(liveMidi),4.5,0,7);g.fill();}}
+}
+function drawOverview(){
+  const c=$('#lab-ov');const [g,w,h]=fit(c);g.fillStyle=COL.ink;g.fillRect(0,0,w,h);
+  if(!clip.mono){g.fillStyle=COL.muted;g.font='12px '+tok('--f-body');g.textAlign='center';g.textBaseline='middle';g.fillText('拖入音频文件，或点下面推荐唱片的「试听并解构」',w/2,h/2);return;}
+  const d=clip.mono,dur=d.length/clip.sr,spp=d.length/w;
+  const xa=w*clip.a/dur,xb=w*clip.b/dur;g.fillStyle='rgba(232,173,71,.13)';g.fillRect(xa,0,xb-xa,h);
+  for(let x=0;x<w;x++){let mn=1,mx=-1;const s=Math.floor(x*spp),e=Math.min(d.length,Math.floor((x+1)*spp));for(let i=s;i<e;i+=Math.max(1,Math.floor((e-s)/64))){const v=d[i];if(v<mn)mn=v;if(v>mx)mx=v;}
+    g.fillStyle=(x>=xa&&x<=xb)?COL.gold:'#4a5185';g.fillRect(x,h/2-mx*h/2*.95,1,Math.max(1,(mx-mn)*h/2*.95));}
+  g.fillStyle=COL.gold;[xa,xb].forEach(x=>g.fillRect(x-1,0,2,h));
+  if(L.playing){const p=pos();if(p!=null){g.fillStyle=COL.cream;g.fillRect(w*p/dur-1,0,2,h);}}
+}
+function drawStatic(){buildSG();drawEQ(null);drawSG(null);drawPitch(null);drawOverview();renderBands(null);}
+
+/* ---------- glottis (schematic) ---------- */
+const GS={phase:0,vphase:0,t:0,last:0};
+function glottisFrame(ts){
+  const t=TC[L.tech].g;const dt=Math.min(.05,(ts-(GS.last||ts))/1000);GS.last=ts;GS.t+=dt;
+  let rate=1.3;if(t.vib)rate*=1+.35*Math.sin(GS.t*2*Math.PI*.55);if(L.tech==='runs')rate*=[1,1.6,.8,1.9,1.2][Math.floor(GS.t*3)%5];
+  if(!reduced)GS.phase=(GS.phase+dt*rate)%1;GS.vphase=(GS.vphase+dt*rate*.5*(1+.3*Math.sin(GS.t*13)))%1;
+  const p=GS.phase,open=p<1-t.cq?Math.sin(Math.PI*p/(1-t.cq)):0;
+  const cx=110,top=34,bot=146;const amp=t.amp*26*open,gap=t.gap*14;const thick=t.thin?20:36;
+  const edge=s=>{const mx=cx+s*(2+amp),px=cx+s*(gap+amp*.35+1);return `M${cx},${top} Q${mx},${(top+bot)/2} ${px},${bot}`;};
+  $('#gl-L').setAttribute('d',edge(-1)+` L${cx-thick-34},${bot-6} Q${cx-thick-46},${(top+bot)/2} ${cx-10},${top-4} Z`);
+  $('#gl-R').setAttribute('d',edge(1)+` L${cx+thick+34},${bot-6} Q${cx+thick+46},${(top+bot)/2} ${cx+10},${top-4} Z`);
+  $('#gl-gap').setAttribute('d',edge(-1)+` L${cx+gap+amp*.35+1},${bot} Q${cx+2+amp},${(top+bot)/2} ${cx},${top} Z`);
+  const vo=t.vent?Math.max(0,Math.sin(GS.vphase*2*Math.PI))*9:0;
+  $('#gl-vL').setAttribute('transform',`translate(${-vo},0)`);$('#gl-vR').setAttribute('transform',`translate(${vo},0)`);
+  $('#gl-vL').style.opacity=$('#gl-vR').style.opacity=t.vent?1:.35;
+  const rx=96-t.ae*30,ry=78-t.ae*22;$('#gl-ae').setAttribute('rx',rx);$('#gl-ae').setAttribute('ry',ry);
+  if(!$('#lab-app').hidden)requestAnimationFrame(glottisFrame);
+}
+
+/* ---------- live loop ---------- */
+function pos(){if(L.media)return clip.a+L.media.currentTime;if(!L.playing||!ctx)return null;const span=clip.b-clip.a;const e=ctx.currentTime-L.t0;return clip.a+(L.loop?e%span:Math.min(e,span));}
+let liveYin=null;
+let looping=false;
+function kick(){if(!looping){looping=true;requestAnimationFrame(liveFrame);}}
+function liveFrame(){
+  if(!L.playing&&L.morph>=1){looping=false;return;}
+  if(L.morph<1){L.morph=Math.min(1,L.morph+.06);const e=1-Math.pow(1-L.morph,3);L.ref=L.refFrom.map((v,i)=>v+(L.refTo[i]-v)*e);}
+  let live=null,liveMidi=null;
+  if(L.playing&&an){an.getFloatFrequencyData(fqBuf);an.getFloatTimeDomainData(tdBuf);
+    const pw=liveRanges.map(([a,b])=>{let s=0,n=0;for(let k=a;k<=b&&k<fqBuf.length;k++){s+=Math.pow(10,fqBuf[k]/10);n++;}return s/Math.max(1,n);});
+    let rms=0,pk=0;for(let i=tdBuf.length-2048;i<tdBuf.length;i++){rms+=tdBuf[i]*tdBuf[i];pk=Math.max(pk,Math.abs(tdBuf[i]));}rms=10*Math.log10(rms/2048+1e-12);const pkdb=20*Math.log10(pk+1e-9);
+    const db=pw.map(p=>10*Math.log10(p+1e-14));const mx=Math.max(...db);if(mx>-110)live=db.map(v=>v-mx);
+    const sr=ctx.sampleRate,W=Math.round(sr*.025),tmax=Math.floor(sr/65),tmin=Math.floor(sr/1300);if(!liveYin||liveYin.length<tmax+2)liveYin=new Float32Array(tmax+2);
+    let hnr=NaN;if(rms>-50){const [tt,a]=yin(tdBuf,tdBuf.length-W-tmax-1,W,tmin,tmax,liveYin);if(a<.3){liveMidi=hz2midi(sr/tt);hnr=10*Math.log10((1-a)/a);}}
+    drawScope();drawMeter(rms,pkdb);
+    $('#lv-f0').textContent=liveMidi?(midiName(liveMidi)+' '+fmtCents(liveMidi)):'—';
+    $('#lv-hz').textContent=liveMidi?Math.round(440*Math.pow(2,(liveMidi-69)/12))+' Hz':'';
+    $('#lv-hnr').textContent=isFinite(hnr)?hnr.toFixed(1)+' dB':'—';
+    if(live)renderBands(bandShare(live));}
+  const p=pos();drawEQ(live);if(L.playing){drawSG(p);drawPitch(p,liveMidi);drawOverview();$('#lab-time').textContent=fmtT(p-clip.a)+' / '+fmtT(clip.b-clip.a);}
+  requestAnimationFrame(liveFrame);
+}
+const fmtCents=m=>{const c=Math.round((m-Math.round(m))*100);return (c>=0?'+':'')+c+'¢';};
+const fmtT=s=>{s=Math.max(0,s||0);return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')+'.'+Math.floor(s*10%10);};
+function drawScope(){const c=$('#lab-scope');const [g,w,h]=fit(c);g.fillStyle=COL.ink;g.fillRect(0,0,w,h);
+  g.strokeStyle='rgba(120,128,180,.2)';g.beginPath();g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke();
+  const n=1200;let s=tdBuf.length-n-800;for(let i=s;i<s+800;i++)if(tdBuf[i-1]<0&&tdBuf[i]>=0){s=i;break;}
+  let mx=.02;for(let i=s;i<s+n;i++)mx=Math.max(mx,Math.abs(tdBuf[i]));
+  g.strokeStyle=COL.gold;g.lineWidth=1.4;g.beginPath();for(let i=0;i<n;i++){const x=w*i/n,y=h/2-tdBuf[s+i]/mx*h*.44;i?g.lineTo(x,y):g.moveTo(x,y);}g.stroke();}
+const meterHold={v:-90,t:0};
+function drawMeter(rms,pk){const c=$('#lab-meter');const [g,w,h]=fit(c);g.fillStyle=COL.ink;g.fillRect(0,0,w,h);
+  const X=d=>w*(Math.max(-60,Math.min(0,d))+60)/60;g.fillStyle=COL.gold;g.fillRect(0,h*.15,X(rms),h*.3);g.fillStyle=COL.clay;g.fillRect(0,h*.55,X(pk),h*.3);
+  if(pk>meterHold.v||performance.now()-meterHold.t>1200){meterHold.v=pk;meterHold.t=performance.now();}g.fillStyle=COL.cream;g.fillRect(X(meterHold.v)-1,h*.55,2,h*.3);
+  $('#lv-rms').textContent=rms.toFixed(1);$('#lv-pk').textContent=pk.toFixed(1);}
+
+/* ---------- ui ---------- */
+function renderBands(live){
+  const ref=L.ref?bandShare(L.ref):BANDS.map(()=>0);const cl=live||(A?A.bands:null);
+  $('#lab-bands').innerHTML=BANDS.map((b,i)=>'<div class="bb"><div class="bb-n">'+b.zh+'<span>'+(b.lo>=1000?b.lo/1000+'k':b.lo)+'–'+(b.hi>=1000?b.hi/1000+'k':b.hi)+'</span></div><div class="bb-t"><i class="bb-c" style="width:'+(cl?Math.round(cl[i]*100):0)+'%"></i><i class="bb-r" style="left:'+Math.round(ref[i]*100)+'%"></i></div><div class="bb-v">'+(cl?Math.round(cl[i]*100)+'%':'—')+'</div></div>').join('');
+}
+function renderStats(){
+  const s=A;const f=(v,d,u)=>isFinite(v)?v.toFixed(d)+(u||''):'—';
+  const items=s?[
+    ['与参考的相似度',f(similarity(s.ltCurve,refCurve(L.tech))*100,0,'%'),'本片段的平均频谱和“'+TC[L.tech].zh+'”参考曲线的形状相关度'],
+    ['音域',isFinite(s.f0lo)?midiName(s.f0lo)+' – '+midiName(s.f0hi):'—','5%–95% 的人声音高范围；中位 '+(isFinite(s.f0med)?midiName(s.f0med):'—')],
+    ['谐噪比 HNR',f(s.hnr,1,' dB'),'越低越“沙”、越多气声；干净的强混通常在 15 dB 以上'],
+    ['次谐波',f(s.shr,1,' dB'),'基频一半处的能量相对谐波；嘶吼会明显升高'],
+    ['颤音',s.vib?s.vib.rate.toFixed(1)+' Hz · ±'+Math.round(s.vib.ext)+'¢':'未检出','稳定长音里的颤音速度和宽度'],
+    ['音符变化',f(s.density,1,' /秒'),'转音越密，这个数越大'],
+    ['最大滑音',f(s.glide,1,' 半音'),'0.3 秒内音高移动的最大幅度'],
+    ['动态范围',f(s.dyn,1,' dB'),'最响和较弱的人声段落之间的落差'],
+    ['峰值因数',f(s.crest,1,' dB'),'瞬间峰值比平均电平高多少；起音越猛越大'],
+    ['频谱重心',isFinite(s.centroid)?Math.round(s.centroid)+' Hz':'—','能量的“重心”位置，越高越亮']
+  ]:[];
+  $('#lab-stats').innerHTML=s?items.map(([k,v,d])=>'<div class="st"><div class="st-k">'+k+'</div><div class="st-v">'+v+'</div><div class="st-d">'+d+'</div></div>').join(''):'<p class="empty">载入一段声音后，这里会给出整段的测量结果。</p>';
+}
+function renderTech(){
+  const t=TC[L.tech];
+  $('#tlist').querySelectorAll('.tbtn').forEach(b=>{b.classList.toggle('active',b.dataset.id===L.tech);b.setAttribute('aria-pressed',b.dataset.id===L.tech);});
+  $('#th-name').innerHTML=esc(t.zh)+'<span class="en">'+esc(t.en)+'</span>';$('#th-era').textContent=t.era;$('#th-d').textContent=t.d;
+  $('#th-body').innerHTML=[['声门',t.body.glottis],['喉位',t.body.larynx],['声道',t.body.tract],['气息',t.body.breath]].map(([k,v])=>'<div><dt>'+k+'</dt><dd>'+esc(v)+'</dd></div>').join('');
+  $('#th-watch').innerHTML=t.watch.map(w=>'<li>'+esc(w)+'</li>').join('');
+  [['m-cq',t.g.cq],['m-lar',t.g.lar],['m-ps',t.g.ps]].forEach(([id,v])=>$('#'+id).style.width=Math.round(v*100)+'%');
+  $('#m-cqv').textContent=t.g.cq.toFixed(2);
+  renderRefs();renderLib();
+  const to=refCurve(L.tech);L.refFrom=L.ref||to;L.refTo=to;L.morph=reduced?1:0;if(reduced)L.ref=to;
+  kick();
+  renderBands(null);if(A)renderStats();
+}
+const amSearch=q=>'https://music.apple.com/us/search?term='+encodeURIComponent(q);
+const refQ=r=>r.q||r.t.replace(/（.*?）/g,'').replace(/—/g,' ').replace(/\s+/g,' ').trim();
+function renderRefs(){
+  const t=TC[L.tech];
+  $('#lab-refs').innerHTML=t.refs.map((r,i)=>'<li><div class="rt">'+esc(r.t)+'</div><div class="rw">'+esc(r.w)+'</div><div class="ra"><button class="mini" type="button" data-pv="'+i+'">▶ 试听并解构</button><a class="mini" href="'+amSearch(refQ(r))+'" target="_blank" rel="noopener">Apple Music ↗</a></div><div class="rs" id="rs-'+i+'"></div></li>').join('');
+  $('#lab-refs').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>playPreview(t.refs[+b.dataset.pv],+b.dataset.pv,0));
+}
+
+/* ---------- sources ---------- */
+function setStatus(msg,kind){const s=$('#lab-status');s.textContent=msg||'';s.className='status'+(kind?' '+kind:'');}
+async function loadArrayBuffer(ab,name,origin,extra){
+  if(!ac()){setStatus('这个浏览器不支持网页音频分析。','err');return false;}
+  stop();setStatus('解码中…');
+  let buf;try{buf=await ctx.decodeAudioData(ab.slice(0));}catch(e){setStatus('读不了这个文件。试试 mp3、m4a、wav 或 aac。','err');return false;}
+  const ch=buf.numberOfChannels,n=buf.length,mono=new Float32Array(n);for(let c=0;c<ch;c++){const d=buf.getChannelData(c);for(let i=0;i<n;i++)mono[i]+=d[i]/ch;}
+  Object.assign(clip,{buf,mono,sr:buf.sampleRate,name,origin,link:'',blob:null,preview:null},extra||{});
+  const dur=n/buf.sampleRate;clip.a=extra&&extra.a!=null?extra.a:0;clip.b=extra&&extra.b!=null?extra.b:Math.min(dur,30);
+  $('#lab-name').textContent=name;$('#lab-src').innerHTML=clip.link?'<a href="'+clip.link+'" target="_blank" rel="noopener">在 Apple Music 打开 ↗</a>':'';
+  $('#lab-play').disabled=false;$('#lab-save').disabled=false;
+  setStatus('分析中…');await new Promise(r=>setTimeout(r,20));analyze();setStatus(origin==='preview'?'Apple Music 30 秒试听片段':'');
+  $('#lab-time').textContent='0:00.0 / '+fmtT(clip.b-clip.a);return true;
+}
+async function loadFile(file){const ab=await file.arrayBuffer();const ok=await loadArrayBuffer(ab,file.name,'file');if(ok)clip.blob=file;}
+// iTunes Search API via JSONP (works when the page is opened as a local file; the claude.ai sandbox blocks it)
+let jsonpN=0;
+function itunes(q){return new Promise((res,rej)=>{const cb='__itunes'+(++jsonpN);const s=document.createElement('script');
+  const done=()=>{clearTimeout(tm);try{delete window[cb];}catch(e){window[cb]=undefined;}s.remove();};
+  const tm=setTimeout(()=>{done();rej(new Error('timeout'));},8000);
+  window[cb]=d=>{done();res((d&&d.results)||[]);};s.onerror=()=>{done();rej(new Error('blocked'));};
+  s.src='https://itunes.apple.com/search?media=music&entity=song&limit=8&country=US&term='+encodeURIComponent(q)+'&callback='+cb;document.head.appendChild(s);});}
+const pvCache={};
+async function playPreview(ref,i,alt){
+  const box=$('#rs-'+i);const q=refQ(ref);
+  if(L.blocked){box.innerHTML=blockedMsg(q);return;}
+  box.textContent='正在 Apple Music 里找…';
+  let rs=pvCache[q];if(!rs){try{rs=pvCache[q]=(await itunes(q)).filter(r=>r.previewUrl);}catch(e){L.blocked=true;box.innerHTML=blockedMsg(q);return;}}
+  if(!rs.length){box.innerHTML='Apple Music 里没找到这首的试听。<a href="'+amSearch(q)+'" target="_blank" rel="noopener">去官网搜 ↗</a>';return;}
+  const r=rs[alt%rs.length];
+  box.innerHTML='正在用：'+esc(r.artistName)+' — '+esc(r.trackName)+(r.collectionName?' <span class="dim">（'+esc(r.collectionName)+'）</span>':'')+(rs.length>1?' <button class="mini" type="button">换一个版本</button>':'');
+  const sw=box.querySelector('button');if(sw)sw.onclick=()=>playPreview(ref,i,alt+1);
+  let ab=null;try{const resp=await fetch(r.previewUrl,{mode:'cors'});if(!resp.ok)throw 0;ab=await resp.arrayBuffer();}catch(e){ab=null;}
+  if(ab){const ok=await loadArrayBuffer(ab,r.artistName+' — '+r.trackName,'preview',{link:r.trackViewUrl,preview:{q,alt}});if(ok){clip.link=r.trackViewUrl;$('#lab-src').innerHTML='<a href="'+r.trackViewUrl+'" target="_blank" rel="noopener">在 Apple Music 打开 ↗</a>';play();}}
+  else{ // fall back to plain playback without analysis
+    stop();const m=new Audio(r.previewUrl);L.media=m;m.play().catch(()=>{});m.onended=()=>{L.media=null;};
+    setStatus('浏览器不允许分析这段试听的频谱（跨域限制），现在只能直接播放。想看曲线，可以把自己的音频文件拖进来。','warn');}
+}
+function blockedMsg(q){return '在 claude.ai 网页里，安全设置不允许页面直接连 Apple Music。把 index.html 下载下来，用浏览器打开就能直接试听和解构。现在可以：<a href="'+amSearch(q)+'" target="_blank" rel="noopener">去 Apple Music 听 ↗</a>，或者把自己的音频拖进来。';}
+
+/* ---------- transport ---------- */
+function play(){
+  if(L.media){L.media.pause();L.media=null;}
+  if(!clip.buf||!ac())return;stop();const s=ctx.createBufferSource();s.buffer=clip.buf;s.loop=L.loop;s.loopStart=clip.a;s.loopEnd=clip.b;s.connect(gainN);
+  if(L.loop)s.start(0,clip.a);else s.start(0,clip.a,clip.b-clip.a);
+  L.src=s;L.t0=ctx.currentTime;L.playing=true;s.onended=()=>{if(L.src===s){L.playing=false;L.src=null;syncTransport();drawStatic();}};
+  syncTransport();kick();
+}
+function stop(){if(L.src){const s=L.src;L.src=null;try{s.stop();}catch(e){}}if(L.media){L.media.pause();L.media=null;}L.playing=false;syncTransport();}
+function syncTransport(){$('#lab-play').textContent=L.playing?'■ 停止':'▶ 播放选区';$('#lab-loop').classList.toggle('on',L.loop);}
+$('#lab-play').onclick=()=>{if(L.playing){stop();drawStatic();}else play();};
+$('#lab-loop').onclick=()=>{L.loop=!L.loop;syncTransport();if(L.playing)play();};
+$('#lab-file').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)loadFile(f);e.target.value='';};
+const app=$('#lab-app');
+app.addEventListener('dragover',e=>{e.preventDefault();app.classList.add('drag');});
+app.addEventListener('dragleave',e=>{if(e.target===app)app.classList.remove('drag');});
+app.addEventListener('drop',e=>{e.preventDefault();app.classList.remove('drag');const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)loadFile(f);});
+// selection on the overview
+(function(){const c=$('#lab-ov');let drag=null;
+  const tAt=e=>{const r=c.getBoundingClientRect();return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width))*clip.mono.length/clip.sr;};
+  c.addEventListener('pointerdown',e=>{if(!clip.mono)return;c.setPointerCapture(e.pointerId);const t=tAt(e),dur=clip.mono.length/clip.sr,tol=dur*.015;
+    drag=Math.abs(t-clip.a)<tol?'a':Math.abs(t-clip.b)<tol?'b':'new';if(drag==='new'){clip.a=t;clip.b=Math.min(dur,t+.5);drag='b';}drawOverview();});
+  c.addEventListener('pointermove',e=>{if(!drag)return;const t=tAt(e);if(drag==='a')clip.a=Math.min(t,clip.b-.3);else clip.b=Math.max(t,clip.a+.3);
+    if(clip.b-clip.a>30){if(drag==='a')clip.b=clip.a+30;else clip.a=clip.b-30;}drawOverview();$('#lab-time').textContent='0:00.0 / '+fmtT(clip.b-clip.a);});
+  const up=()=>{if(!drag)return;drag=null;const was=L.playing;stop();setStatus('分析中…');setTimeout(()=>{analyze();setStatus('');if(was)play();},20);};
+  c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);})();
+
+/* ---------- library (this browser only) ---------- */
+let idb=null;
+function openDB(){return new Promise(res=>{try{const r=indexedDB.open('vocal-anatomy',1);r.onupgradeneeded=()=>r.result.createObjectStore('clips',{keyPath:'id',autoIncrement:true});r.onsuccess=()=>res(idb=r.result);r.onerror=()=>res(null);}catch(e){res(null);}});}
+function tx(mode){return idb.transaction('clips',mode).objectStore('clips');}
+function allClips(){return new Promise(res=>{if(!idb)return res([]);try{const r=tx('readonly').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=()=>res([]);}catch(e){res([]);}});}
+async function renderLib(){
+  const box=$('#lab-lib');if(!idb){box.innerHTML='<p class="empty">这个浏览器不能保存片段（可能是隐私模式）。</p>';return;}
+  const list=(await allClips()).filter(c=>c.tech===L.tech);
+  box.innerHTML=list.length?list.map(c=>'<li><span class="rt">'+esc(c.name)+'</span><span class="dim">'+fmtT(c.a)+'–'+fmtT(c.b)+(c.preview?' · 试听':'')+'</span><span class="ra"><button class="mini" type="button" data-load="'+c.id+'">载入</button><button class="mini" type="button" data-del="'+c.id+'">删除</button></span></li>').join(''):'<p class="empty">还没有保存过“'+esc(TC[L.tech].zh)+'”的片段。载入声音、选好一段，点“保存到片段库”。</p>';
+  box.querySelectorAll('[data-load]').forEach(b=>b.onclick=async()=>{const c=list.find(x=>x.id==b.dataset.load);if(!c)return;
+    if(c.blob){const ok=await loadArrayBuffer(await c.blob.arrayBuffer(),c.name,'file',{a:c.a,b:c.b});if(ok){clip.blob=c.blob;play();}}
+    else if(c.preview){const ref={t:c.name,q:c.preview.q,w:''};const tmp=document.createElement('div');tmp.id='rs-lib';box.appendChild(tmp);await playPreview(ref,'lib',c.preview.alt||0);if(clip.mono){clip.a=c.a;clip.b=c.b;analyze();if(L.playing)play();}}});
+  box.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{try{const r=tx('readwrite').delete(+b.dataset.del);r.onsuccess=()=>renderLib();}catch(e){}});
+}
+$('#lab-save').onclick=()=>{if(!idb||!clip.mono)return;const rec={tech:L.tech,name:clip.name,a:clip.a,b:clip.b,t:Date.now()};
+  if(clip.origin==='preview')rec.preview=clip.preview;else if(clip.blob)rec.blob=clip.blob;else return;
+  try{const r=tx('readwrite').add(rec);r.onsuccess=()=>{setStatus('已保存到“'+TC[L.tech].zh+'”的片段库（只存在这个浏览器里）。','ok');renderLib();};r.onerror=()=>setStatus('保存失败：浏览器存储空间可能不够。','err');}catch(e){setStatus('保存失败。','err');}};
+
+/* ---------- technique list & mode ---------- */
+$('#tlist').innerHTML=TECH.map(t=>'<button class="tbtn" type="button" data-id="'+t.id+'"><span class="tz">'+esc(t.zh)+'</span><span class="te">'+esc(t.en)+'</span><canvas class="tspark" width="96" height="26" aria-hidden="true"></canvas></button>').join('');
+$('#tlist').querySelectorAll('.tbtn').forEach(b=>{b.onclick=()=>{L.tech=b.dataset.id;renderTech();try{history.replaceState(null,'','#lab-'+L.tech);}catch(e){}};
+  const c=b.querySelector('canvas'),g=c.getContext('2d'),cv=refCurve(b.dataset.id);g.strokeStyle=COL.gold;g.lineWidth=1.5;g.beginPath();
+  PF.forEach((f,i)=>{const x=96*i/(NP-1),y=2+22*(Math.max(DBMIN,cv[i])/DBMIN);i?g.lineTo(x,y):g.moveTo(x,y);});g.stroke();});
+
+function show(id){L.tech=TC[id]?id:L.tech;renderTech();drawStatic();GS.last=0;requestAnimationFrame(glottisFrame);}
+window.LAB_APP={show,stop};
+window.addEventListener('resize',()=>{if(!$('#lab-app').hidden)drawStatic();});
+openDB().then(()=>renderLib());
+renderStats();
+})();
+
 </script>
 <script>
 (function(){
@@ -892,7 +1507,7 @@ function renderDossier(){
     html='<div class="kinds"><span><i style="background:var(--clay)"></i>压迫</span><span><i style="background:var(--blue)"></i>进步</span><span><i style="background:var(--gold)"></i>转折</span></div><ul class="laws">'+
       era.law.map(l=>'<li class="'+l.k+'"><span class="y">'+esc(l.y)+'</span><span>'+esc(l.t)+'</span></li>').join('')+'</ul>';
   }else if(S.tab==='music'){
-    html='<div class="rows">'+era.music.map(m=>'<div class="row"><span class="n">'+esc(m.n)+'</span>'+(m.lab?'<button class="mini" type="button" data-play="'+m.lab+'">▶ 听示范</button>':'<span></span>')+'<span class="d">'+esc(m.d)+'</span></div>').join('')+'</div>';
+    html='<div class="rows">'+era.music.map(m=>'<div class="row"><span class="n">'+esc(m.n)+'</span>'+(m.lab&&LABMAP[m.lab]?'<button class="mini" type="button" data-lab="'+LABMAP[m.lab]+'">解构这种唱腔 →</button>':'<span></span>')+'<span class="d">'+esc(m.d)+'</span></div>').join('')+'</div>';
   }else if(S.tab==='people'){
     html='<div class="rows">'+era.people.map(p=>'<div class="row"><span class="n">'+esc(p.n)+'</span>'+(p.c&&MAP.pts[p.c]&&P(p.c)?'<button class="mini" type="button" data-city="'+p.c+'">在地图上看</button>':'<span></span>')+'<span class="d">'+esc(p.d)+'</span></div>').join('')+'</div>';
   }else if(S.tab==='media'){
@@ -903,10 +1518,9 @@ function renderDossier(){
   }
   body.innerHTML=html;
   body.querySelectorAll('[data-city]').forEach(b=>b.onclick=()=>showCity(b.dataset.city));
-  body.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>togglePlay(b.dataset.play));
+  body.querySelectorAll('[data-lab]').forEach(b=>b.onclick=()=>setMode('lab',b.dataset.lab));
   body.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(+b.dataset.k));
   const nx=body.querySelector('[data-next]');if(nx)nx.onclick=()=>go((S.cur+1)%ERAS.length);
-  syncPlaying();
 }
 function quizHTML(era){
   const q=era.quiz,i=S.cur,shift=(i*3+1)%q.o.length;
@@ -937,7 +1551,7 @@ function go(i){
 $('#prev').onclick=()=>{stopTour();if(S.cur>0)go(S.cur-1);};
 $('#next').onclick=()=>{stopTour();go((S.cur+1)%ERAS.length);};
 document.addEventListener('keydown',e=>{
-  if(e.target.closest&&e.target.closest('input,textarea'))return;
+  if(mode!=='map'||(e.target.closest&&e.target.closest('input,textarea')))return;
   if(e.key==='ArrowRight'){stopTour();go(Math.min(ERAS.length-1,S.cur+1));}
   if(e.key==='ArrowLeft'){stopTour();go(Math.max(0,S.cur-1));}
 });
@@ -949,126 +1563,17 @@ $('#tour').onclick=()=>{
   S.tour=setInterval(()=>{if(S.cur>=ERAS.length-1){stopTour();return;}go(S.cur+1);},16000);
 };
 
-/* ---------- audio ---------- */
-let ctx=null,bus=null,noiseBuf=null,playing=null,playTimer=null;
-const mtof=m=>440*Math.pow(2,(m-69)/12);
-function ac(){if(!ctx){const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;ctx=new A();
-  const n=ctx.sampleRate;noiseBuf=ctx.createBuffer(1,n,n);const d=noiseBuf.getChannelData(0);for(let i=0;i<n;i++)d[i]=Math.random()*2-1;}
-  if(ctx.state==='suspended')ctx.resume();return ctx;}
-function newBus(){
-  if(bus){const old=bus;try{old.gain.cancelScheduledValues(ctx.currentTime);old.gain.setValueAtTime(old.gain.value,ctx.currentTime);old.gain.linearRampToValueAtTime(0,ctx.currentTime+.06);}catch(e){}setTimeout(()=>{try{old.disconnect();}catch(e){}},150);}
-  bus=ctx.createGain();bus.gain.value=.9;const comp=ctx.createDynamicsCompressor();comp.threshold.value=-14;bus.connect(comp);comp.connect(ctx.destination);
+/* ---------- modes ---------- */
+let mode='map';
+function setMode(m,tech){
+  mode=m;$('#map-app').hidden=m!=='map';$('#lab-app').hidden=m!=='lab';
+  document.querySelectorAll('.mode').forEach(b=>{b.classList.toggle('active',b.dataset.mode===m);b.setAttribute('aria-selected',b.dataset.mode===m);});
+  $('#score').hidden=$('#tour').hidden=m!=='map';
+  if(m==='lab'){stopTour();window.LAB_APP.show(tech||'holler');try{history.replaceState(null,'','#lab-'+(tech||'holler'));}catch(e){}}
+  else{window.LAB_APP.stop();updateRail();try{history.replaceState(null,'','#map');}catch(e){}}
+  window.scrollTo(0,0);
 }
-function shaper(amt){const ws=ctx.createWaveShaper();const n=1024,c=new Float32Array(n);for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=Math.tanh(x*amt);}ws.curve=c;return ws;}
-// one sung note
-function voice(m,t,dur,o){
-  o=o||{};const f=mtof(m);const out=ctx.createGain();out.gain.value=0;
-  const vol=o.vol||.16,att=o.att||.05,rel=o.rel||.14;
-  out.gain.setValueAtTime(0,t);out.gain.linearRampToValueAtTime(vol,t+att);out.gain.setValueAtTime(vol*.9,t+Math.max(att,dur-.02));out.gain.linearRampToValueAtTime(0,t+dur+rel);
-  const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=o.bright||(o.soft?1100:1700);lp.Q.value=.6;
-  const fm=ctx.createBiquadFilter();fm.type='peaking';fm.frequency.value=o.soft?600:800;fm.gain.value=6;fm.Q.value=1.2;
-  const types=o.soft?['sine','triangle']:['sawtooth','triangle'];
-  const lfo=ctx.createOscillator();lfo.frequency.value=o.vibRate||5.3;const lg=ctx.createGain();lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(f*(o.vib!=null?o.vib:.013),t+Math.min(.45,dur*.6));lfo.connect(lg);
-  const oscs=types.map((ty,k)=>{const os=ctx.createOscillator();os.type=ty;os.detune.value=(k?7:-3)+(o.detune||0);
-    if(o.from!=null){os.frequency.setValueAtTime(mtof(o.from),t);os.frequency.exponentialRampToValueAtTime(f,t+(o.glide||.16));}else os.frequency.setValueAtTime(f,t);
-    lg.connect(os.frequency);const g=ctx.createGain();g.gain.value=k?.5:1;os.connect(g);g.connect(lp);return os;});
-  let node=lp;lp.connect(fm);node=fm;
-  if(o.growl){const ws=shaper(o.growl);const am=ctx.createGain();am.gain.value=.65;const tr=ctx.createOscillator();tr.frequency.value=31;const tg=ctx.createGain();tg.gain.value=.35;tr.connect(tg);tg.connect(am.gain);
-    node.connect(ws);ws.connect(am);node=am;tr.start(t);tr.stop(t+dur+rel+.05);
-    const nz=ctx.createBufferSource();nz.buffer=noiseBuf;nz.loop=true;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f*2;bp.Q.value=2;const ng=ctx.createGain();ng.gain.value=.25;nz.connect(bp);bp.connect(ng);ng.connect(out);nz.start(t);nz.stop(t+dur+rel+.05);}
-  if(o.soft){const nz=ctx.createBufferSource();nz.buffer=noiseBuf;nz.loop=true;const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f*3;bp.Q.value=1.5;const ng=ctx.createGain();ng.gain.value=.05;nz.connect(bp);bp.connect(ng);ng.connect(out);nz.start(t);nz.stop(t+dur+rel+.05);}
-  node.connect(out);out.connect(bus);
-  lfo.start(t);lfo.stop(t+dur+rel+.05);oscs.forEach(os=>{os.start(t);os.stop(t+dur+rel+.05);});
-}
-function seq(list,t,beat,o){list.forEach(it=>{const [m,b,oo]=it;if(m!=null)voice(m,t,b*beat*.95,Object.assign({},o,oo));t+=b*beat;});return t;}
-function organ(ms,t,dur,vol){vol=vol||.05;ms.forEach(m=>{[0,12].forEach((oct,k)=>{const os=ctx.createOscillator();os.type=k?'sine':'triangle';os.frequency.value=mtof(m+oct);
-  const g=ctx.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol*(k?.5:1),t+.02);g.gain.setValueAtTime(vol*(k?.5:1),t+dur);g.gain.linearRampToValueAtTime(0,t+dur+.08);
-  os.connect(g);g.connect(bus);os.start(t);os.stop(t+dur+.1);});});}
-function noiseHit(t,type,freq,dur,vol){const s=ctx.createBufferSource();s.buffer=noiseBuf;const f=ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=ctx.createGain();
-  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);s.connect(f);f.connect(g);g.connect(bus);s.start(t,Math.random()*.5);s.stop(t+dur+.02);}
-function clap(t){[0,.012,.024].forEach(d=>noiseHit(t+d,'bandpass',1300,.09,.5));}
-function tamb(t,v){noiseHit(t,'highpass',7000,.07,v||.25);}
-function drum(t,v){const os=ctx.createOscillator();os.type='sine';os.frequency.setValueAtTime(120,t);os.frequency.exponentialRampToValueAtTime(48,t+.25);
-  const g=ctx.createGain();g.gain.setValueAtTime(v||.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);os.connect(g);g.connect(bus);os.start(t);os.stop(t+.4);}
-function bell(t){[1,2.76].forEach((r,k)=>{const os=ctx.createOscillator();os.frequency.value=880*r;const g=ctx.createGain();g.gain.setValueAtTime(k?.05:.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.25);os.connect(g);g.connect(bus);os.start(t);os.stop(t+.3);});}
-function bass(m,t,dur){const os=ctx.createOscillator();os.type='triangle';os.frequency.value=mtof(m);const g=ctx.createGain();g.gain.setValueAtTime(.3,t);g.gain.exponentialRampToValueAtTime(.05,t+dur);g.gain.linearRampToValueAtTime(0,t+dur+.05);os.connect(g);g.connect(bus);os.start(t);os.stop(t+dur+.1);}
-const CH={C:[60,64,67],F:[60,65,69],G:[59,62,67],C7:[58,64,67],F7:[60,63,69],Am:[57,60,64]};
-
-const DEMOS={
-  call(t){const B=.42;
-    const lead=[[67,1],[69,.5],[67,.5],[64,1],[62,1]],lead2=[[67,1],[72,1,{from:69}],[69,.5],[67,.5],[64,1]];
-    const ans=[[60,55,52],[62,57,53],[64,60,55]];
-    let x=t;for(const L of [lead,lead2]){x=seq(L,x,B,{vol:.2});x+=B*.3;
-      ans.forEach((ch,k)=>{const d=(k===2?2:1)*B;ch.forEach((m,j)=>voice(m,x+j*.012,d*.95,{vol:.08,detune:j*4-4,bright:1300}));organ(ch.map(c=>c-12),x,d,.025);x+=d;});x+=B*.6;}
-    return x;},
-  poly(t){const C=1.2;let x=t;for(let c=0;c<8;c++){drum(x,.7);drum(x+C/2,.45);
-      if(c>=2){[0,C/3,2*C/3].forEach(d=>clap(x+d));}
-      if(c>=4){[0,2,4,5,7,9,11].forEach(s=>bell(x+s*C/12));}
-      x+=C;}return x;},
-  lining(t){let x=t;const fast=[[64,.5],[64,.5],[67,.5],[69,.5],[67,1]];const B=.24;
-    const slow=[[60,2],[62,1.5,{from:60,glide:.3}],[64,2.5,{from:62,glide:.35}],[67,2,{from:64,glide:.3}],[64,3,{from:67,glide:.5}]];
-    x=seq(fast,x,B,{vol:.18,bright:2000,vib:.004});x+=.25;
-    [0,.07,.15].forEach((off,j)=>seq(slow,x+off,.5,{vol:.08,detune:j*6-6,bright:1200}));
-    x+=11*.5+.4;x=seq([[67,.5],[67,.5],[69,.5],[72,.5],[69,1]],x,B,{vol:.18,bright:2000,vib:.004});x+=.25;
-    const slow2=[[64,2],[67,1.5,{from:64,glide:.3}],[69,2,{from:67,glide:.35}],[67,1.5,{from:69,glide:.3}],[64,1,{from:67}],[60,3,{from:62,glide:.6}]];
-    [0,.08,.14].forEach((off,j)=>seq(slow2,x+off,.5,{vol:.08,detune:j*6-6,bright:1200}));
-    return x+11*.5+.3;},
-  moan(t){const B=.6;let x=seq([[55,2.5],[58,2,{from:55,glide:.7}],[57,1.5,{from:58,glide:.5}],[55,2,{from:57,glide:.7}],[53,1.5,{from:55,glide:.5}],[55,3,{from:53,glide:.9}]],t,B,{vol:.17,bright:850,vib:.01,vibRate:4.6});
-    organ([43,50],t,(x-t),.03);return x;},
-  blue(t){const B=.42;organ(CH.C,t,9*B,.03);
-    let x=seq([[60,.5],[62,.5],[64,1],[67,1],[64,1],[62,.5],[60,1.5]],t,B,{vol:.18});x+=B*1.5;
-    organ(CH.C7,x,9*B,.03);
-    x=seq([[60,.5],[63,.5],[64,1,{from:63,glide:.35}],[67,1],[70,.5],[67,.5],[63,1,{from:64,glide:.2}],[60,1.5,{from:62,glide:.4}]],x,B,{vol:.18});return x;},
-  melisma(t){const run=[72,74,72,70,67,70,67,65,63,65,63,60];
-    let x=seq([[72,3]],t,.4,{vol:.18});x=seq(run.map(m=>[m,1]),x,.2,{vol:.16,vib:.003});x=seq([[60,4]],x,.4,{vol:.17});
-    organ(CH.C7,t,x-t,.025);x+=.5;const t2=x;
-    x=seq([[72,2]],x,.4,{vol:.18});x=seq(run.concat([62,63,62,60]).map(m=>[m,1]),x,.085,{vol:.16,vib:0});x=seq([[60,4]],x,.4,{vol:.17});
-    organ(CH.C7,t2,x-t2,.025);return x;},
-  growl(t){let x=seq([[64,4]],t,.4,{vol:.18});x+=.4;
-    x=seq([[64,4]],x,.4,{vol:.2,growl:6});x+=.3;
-    x=seq([[67,1],[64,1,{from:67}],[62,1],[60,3,{from:62}]],x,.4,{vol:.2,growl:7});organ(CH.C,t,x-t,.025);return x;},
-  falsetto(t){const B=.42;let x=seq([[55,1],[57,1],[60,2]],t,B,{vol:.19,bright:1200});
-    x=seq([[72,1,{from:60,glide:.1}],[74,1],[76,2.5,{from:74}],[74,1],[72,2]],x,B,{vol:.15,soft:true,vib:.016});
-    x=seq([[60,3,{from:62,glide:.2}]],x,B,{vol:.17,bright:1200});organ(CH.C,t,x-t,.025);return x;},
-  vamp(t){const B=.36,prog=[['C',36],['F',41],['C',36],['G',35]];let x=t;
-    for(let loop=0;loop<4;loop++){const v=.02+loop*.012;
-      prog.forEach(([c,b],k)=>{organ(CH[c],x,2*B,v);bass(b,x,2*B*.9);
-        if(loop>=1)clap(x+B);if(loop>=2)[0,1].forEach(d=>tamb(x+d*B+B/2,.15));
-        x+=2*B;});
-      const ls=x-8*B;
-      [[67,64,60],[67,64,60]].forEach((ch,k)=>{ch.forEach((m,j)=>voice(m,ls+k*4*B+j*.01,1.6*B,{vol:.06+loop*.012,detune:j*5-5,bright:1300}));});
-      if(loop===2)seq([[null,2],[72,.5],[74,.5],[76,1,{from:74}],[74,.5],[72,.5],[69,1],[67,2]],ls,B,{vol:.15});
-      if(loop===3)seq([[null,1],[76,1.5,{from:72,glide:.2}],[79,1,{from:76}],[76,.5],[74,.5],[72,.5],[74,.5],[72,.5],[67,2]],ls,B,{vol:.17,growl:3});
-    }return x;},
-  mod(t){const B=.36,ph=[[64,.5],[65,.5],[67,1],[69,.5],[67,.5],[64,1],[60,2]];let x=t;
-    for(let k=0;k<4;k++){const tr=k;const st=x;x=seq(ph.map(([m,b])=>[m+tr,b]),x,B,{vol:.15+k*.012});organ(CH.C.map(m=>m+tr-12),st,x-st,.035);x+=B*.4;}return x;},
-  shout(t){const B=.4;let x=t;for(let bar=0;bar<5;bar++){const c=bar%2?CH.F7:CH.C7;
-      for(let q=0;q<4;q++){const qt=x+q*B;tamb(qt,.2);tamb(qt+B/2,.13);if(q%2===0)bass(bar%2?41:36,qt,B*.8);else{clap(qt);}
-        organ(c,qt+B/2,B*.35,.035);if(q===0)drum(qt,.5);}
-      x+=4*B;}
-    seq([[null,8],[72,1],[70,.5],[72,.5],[75,1,{from:72}],[72,1],[null,1],[70,.5],[67,.5],[70,1],[72,2]],t,B,{vol:.17,growl:3});
-    return x;}
-};
-
-function syncPlaying(){
-  document.querySelectorAll('[data-play]').forEach(b=>{const on=b.dataset.play===playing;b.classList.toggle('playing',on);
-    const base=b.dataset.base||(b.dataset.base=b.textContent);b.textContent=on?'■ 停止':base;});
-  document.querySelectorAll('.lcard').forEach(c=>c.classList.toggle('playing',c.dataset.id===playing));
-}
-function stopPlay(){if(ctx)newBus();playing=null;clearTimeout(playTimer);syncPlaying();}
-function togglePlay(id){
-  if(playing===id){stopPlay();return;}
-  if(!ac())return;newBus();const t0=ctx.currentTime+.08;const end=DEMOS[id](t0);
-  playing=id;clearTimeout(playTimer);playTimer=setTimeout(()=>{playing=null;syncPlaying();},(end-t0)*1000+400);syncPlaying();
-}
-
-/* ---------- lab ---------- */
-const lgrid=$('#lgrid');
-LAB.forEach(l=>{
-  const used=ERAS.filter(e=>e.music.some(m=>m.lab===l.id)).map(e=>e.title);
-  const c=h('<article class="card lcard"><div class="top"><h3>'+esc(l.zh)+'<span class="en">'+esc(l.en)+'</span></h3><span class="from">源自：'+esc(l.from)+'</span></div><p>'+esc(l.d)+'</p><p class="who">'+esc(l.who)+'</p>'+(used.length?'<p style="font-size:12.5px">出现在：'+esc(used.join(' · '))+'</p>':'')+'<div class="act"><button class="btn" type="button" data-play="'+l.id+'">▶ 播放示范</button><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div></article>');
-  c.dataset.id=l.id;c.querySelector('[data-play]').onclick=()=>togglePlay(l.id);lgrid.appendChild(c);
-});
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
 
 /* ---------- boot ---------- */
 function start(data){
@@ -1078,9 +1583,10 @@ function start(data){
   if(!TABS.some(t=>t[0]===S.tab))S.tab='story';
   S.cur=Math.max(0,Math.min(ERAS.length-1,c));
   go(S.cur);
-  window.addEventListener('resize',()=>updateRail());
+  window.addEventListener('resize',()=>{if(mode==='map')updateRail();});
+  const hm=/^#lab-([a-z]+)$/.exec(location.hash||'');setMode(hm||data.mode==='lab'?'lab':'map',hm?hm[1]:data.tech);
 }
-try{window.claude&&window.claude.hot&&window.claude.hot.snapshot&&window.claude.hot.snapshot(()=>({cur:S.cur,tab:S.tab}));}catch(e){}
+try{window.claude&&window.claude.hot&&window.claude.hot.snapshot&&window.claude.hot.snapshot(()=>({cur:S.cur,tab:S.tab,mode}));}catch(e){}
 const hot=window.claude&&window.claude.hot;
 if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
 })();

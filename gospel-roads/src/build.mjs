@@ -2,7 +2,7 @@
 // 用法：cd gospel-roads/src && npm install && node mapdata.mjs && node build.mjs
 import {readFileSync, writeFileSync} from 'fs';
 const map = readFileSync('map.json', 'utf8');
-const content = readFileSync('content.js', 'utf8');
+const content = readFileSync('content.js', 'utf8') + '\n' + readFileSync('lab.js', 'utf8');
 const tpl = readFileSync('template.html', 'utf8');
 const out = tpl.replace('/*__DATA__*/', () => 'const MAP=' + map + ';\n' + content);
 writeFileSync('../index.html', out);

@@ -44,21 +44,6 @@ const CITIES = {
   fortworth:{zh:'沃斯堡',en:'Fort Worth, TX',d:'柯克·富兰克林的家乡。他把嘻哈节奏带进了福音合唱。',lab:{us:'l'}}
 };
 
-// 唱腔实验室
-const LAB = [
-  {id:'call',zh:'呼应',en:'Call & Response',from:'西非',d:'领唱唱一句，众人回应一句。这是整条历史线上最核心的结构：非洲村落的劳动歌、种植园的号子、教会里牧师和会众的对答、福音合唱团、灵魂乐的伴唱，直到今天的演唱会互动。',who:'听：Mavis Staples 和 The Staple Singers；任何一场黑人教会的周日礼拜。'},
-  {id:'poly',zh:'复节奏',en:'Polyrhythm',from:'西非',d:'几条节奏同时进行，比如“三对二”。鼓被禁之后，节奏转进了身体：拍手、跺脚、拍打大腿（patting juba）。福音里“在二拍和四拍上拍手”就是这种身体节奏的后代。',who:'这段演示：低鼓走“二”，拍手走“三”，铃声是西非经典的12/8铃型。'},
-  {id:'lining',zh:'领唱填词',en:'Lining Out',from:'18世纪教会',d:'早期很多人不识字，也没有赞美诗集。领唱先快速念或唱出一句歌词，会众再用缓慢、拖长、装饰很多的方式齐唱这一句，每个人的装饰略有不同，形成“异音”的厚重效果。这种唱法也叫“Dr. Watts”或“长韵”（long meter）。',who:'听：搜索 “lined hymn” 或 “Dr. Watts hymn”；Aretha Franklin《Amazing Grace》专辑里有很多这种拖长的影子。'},
-  {id:'moan',zh:'哼吟',en:'Moan / Hum',from:'种植园与教会',d:'没有歌词的低声哼唱和呻吟，在音高之间慢慢滑动。它在祈祷、劳作、葬礼时出现，表达说不出口的东西。蓝调歌手和福音歌手都把“moan”看作最深的表达。',who:'听：Blind Willie Johnson《Dark Was the Night, Cold Was the Ground》（1927）。'},
-  {id:'blue',zh:'蓝调音',en:'Blue Notes',from:'非洲滑音 + 欧洲音阶',d:'在大调里把三音、七音（有时五音）降低一点，或者在大小调之间“弯”过去。演示先放一遍“直的”大调，再放一遍带弯音的蓝调版本，注意第三个音的区别。',who:'听：Bessie Smith、Mahalia Jackson 的任何一首慢歌。'},
-  {id:'melisma',zh:'转音',en:'Runs / Melisma',from:'领唱填词的装饰 + 福音',d:'一个字上唱很多个音，快速上下走。克拉拉·沃德、艾瑞莎·富兰克林、克拉克姐妹把它变成了技艺，后来成为R&B和流行歌手的标志。练习时要先慢、准，再加速。',who:'听：The Clark Sisters《You Brought the Sunshine》；Aretha Franklin《Amazing Grace》。'},
-  {id:'growl',zh:'嘶吼 / 沙音',en:'Growl & Grit',from:'硬福音四重唱',d:'在声音里加入粗糙的喉音、沙哑和颗粒感，表示情绪被推到极限。1940–50年代的四重唱领唱用它把全场推向高潮，后来被灵魂乐歌手直接继承。演示先放干净的长音，再放加了“沙”的同一个音。',who:'听：Archie Brownlee（Five Blind Boys of Mississippi）、Julius Cheeks、Wilson Pickett、James Brown。'},
-  {id:'falsetto',zh:'假声',en:'Falsetto',from:'四重唱领唱',d:'从胸声突然翻到轻、高、透的假声。天鹅银调的克劳德·杰特尔是代表，他影响了Smokey Robinson、Al Green、Curtis Mayfield。演示先唱一段低的胸声，再翻上去。',who:'听：The Swan Silvertones《Mary Don’t You Weep》（1959）；Al Green《Let’s Stay Together》。'},
-  {id:'vamp',zh:'循环推进',en:'Vamp & Ad-lib',from:'西非重复结构',d:'歌曲后段，乐队和合唱团反复循环一小段和弦与短句，领唱在上面即兴（ad-lib），一圈比一圈强，直到全场沸腾。演示里和弦循环四次，后两次加入了领唱的即兴。',who:'听：Otis Redding《Try a Little Tenderness》的结尾；Kirk Franklin 现场。'},
-  {id:'mod',zh:'升调',en:'Modulation',from:'福音合唱团',d:'同一段旋律反复唱，每次升高半音或全音，把情绪一级级往上推。福音合唱团非常爱用，流行乐里也随处可见。演示里同一句唱了四次，每次升高半音。',who:'听：Whitney Houston《I Will Always Love You》的最后一段升调。'},
-  {id:'shout',zh:'呼喊音乐',en:'Shout Music',from:'五旬节教会',d:'快速的节奏、手鼓、在二拍和四拍上的拍手、风琴的切分和弦，人们在这时“被圣灵充满”而跳动（holy dance / shouting）。这股能量后来变成了摇滚和放克。',who:'听：Sister Rosetta Tharpe《Strange Things Happening Every Day》（1944）；任何COGIC教会的“praise break”。'}
-];
-
 const ERAS = [
 {
   id:'africa', yr:'1500', years:'约 1400 – 1600', title:'西非之声', sub:'一切声音的源头', view:'atl',
