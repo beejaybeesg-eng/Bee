@@ -9,6 +9,7 @@ tot_beats = sum(s[1] for s in T['shots']); scale = dur / (tot_beats * beat)  # s
 shots, t = [], 0.0
 for sid, nb, fx in T['shots']:
     d = nb * beat * scale; s = {'id': sid, 't0': round(t, 3), 't1': round(t + d, 3), 'fx': [f for f in fx if not f.startswith('hits') and f != 'rot'], 'push': 0.04}
+    if 'hits1' in fx: s['hits'] = [round(k * beat * scale, 3) for k in range(1, int(nb))]
     if 'hits2' in fx: s['hits'] = [round(k * 2 * beat * scale, 3) for k in range(1, int(nb / 2))]
     if 'hits4' in fx: s['hits'] = [round(k * 4 * beat * scale, 3) for k in range(1, int(nb / 4))]
     if 'rot' in fx: s['rot'] = [0, 90]; s['push'] = 0
